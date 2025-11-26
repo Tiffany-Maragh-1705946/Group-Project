@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=playfair+display">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=dm+sans">
+</head>
+<body>
+    <header id="main-header">
+        <div class="logo">
+            <img src="../Assets/1.png" alt="mochi bakery and cafe white logo" width="100" height="auto">
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li class="dropdown">
+                    <a href="products.html">Products</a>
+                    <ul class="dropdown-menu"> 
+                        <li><a href="product.html#mochi_desserts">Specialty Mochi & Desserts</a></li>
+                        <li><a href="products.html#baked_goods">Baked Goods</a></li>
+                        <li><a href="products.html#drinks">Signature Coffee & Drinks</a> </li>
+                    </ul>
+                </li>
+                <li><a href="about_us.html">About Us</a></li>
+                <li><a href="contact_us.html">Contact Us</a></li>
+            </ul>
+        </nav>
+        <div class="user-auth">
+            <a href="login.html"><button>LOGIN / REGISTER</button></a>
+            <a href="cart.html" class="cart-link">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="cart-item-count">0</span>
+            </a>
+        </div>
+
+        <div class="mobile-controls">
+            <a href="cart.html" class="cart-link mobile-cart">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-item-count-mobile">0</span>
+            </a>
+            <button id="mobile-menu-toggle" aria-label="Open Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        <!-------------------MOBILE VIEW-------------------->
+        <nav id="mobile-nav-menu">
+            <ul>
+                <li class="dropdown"><a href="Codes/products.html"> Products </a> 
+                    <ul class="dropdown-menu">
+                        <li><a href="product.html#mochi_desserts">Specialty Mochi & Desserts</a></li>
+                        <li><a href="product.html#baked-goods">Baked Goods</a></li>
+                        <li><a href="product.html#drinks"> Signature Coffee & Drinks</a></li>
+                    </ul>
+                </li>
+                <li><a href="about_us.html">About Us</a></li>
+                <li><a href="contact_us.html">Contact Us</a></li>
+                <li><a href="login.html">Login / Register</a></li>
+                <li><a href="cart.html">Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <main>
+        <section class="contact-page-container">
+            <h1>Get In Touch</h1>
+            
+            <div class="contact-form-wrapper">
+                <div class="contact-info-card">
+                    <h2>Reach Out Directly</h2>
+                    
+                    <p>We'd love to hear from you! Please feel free to use any of the methods below to contact us.</p>
+                    
+                    <div class="contact-details">
+                        <p class="detail-item"><i class="fa-solid fa-envelope"></i> Email: <a href="mailto:info@mochibakerycafe.com">info@mochibakerycafe.com</a></p>
+                        <p class="detail-item"><i class="fa-solid fa-phone"></i> Phone: +1 678 555-MOCHI</p>
+                        <p class="detail-item"><i class="fa-solid fa-location-dot"></i> Address: 123 Sweet Treat Lane, Kingston</p>
+
+                        <p class="assignment-mailto"><strong>For Comments & Queries (Assignment Requirement):<strong></p>
+                        <a href="mailto:tiffanysmaragh46@students.utech.edu.jm" class="mailto-link-cta">
+                            <i class="fa-solid fa-comment"></i> This is my Student Email.
+                        </a>
+                    </div>
+                </div>
+
+                <form id="contact-form" class="auth-container">
+                    <h2>Send Us a Message</h2>
+                    
+                    <label for="contact-name">Name:</label>
+                    <input type="text" id="contact-name" required>
+                    
+                    <label for="contact-email">Email:</label>
+                    <input type="email" id="contact-email" required>
+                    
+                    <label for="contact-message">Message:</label>
+                    <textarea id="contact-message" rows="5" required></textarea>
+                    
+                    <button type="submit" class="cta-button">Submit Message</button>
+                    <p class="note">Note: This form does not send email in this demonstration.</p>
+                </form>
+            </div>
+        </section>
+        <aside id="cart-sidebar">
+            <div class="sidebar-header">
+                <h2>Your Sweet Haul</h2>
+                <button id="close-cart-button" aria-label="Close Shopping Cart">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="cart-items-list-container">
+                <p id="cart-empty-message">Your cart is currently empty. Start browsing our treats!</p>
+                
+                <div id="cart-items-list">
+                    </div>
+            </div>
+
+            <div class="cart-summary">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td id="cart-subtotal">$0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Discount (10%):</td>
+                            <td id="cart-discount">-$0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Tax (15%):</td>
+                            <td id="cart-tax">$0.00</td>
+                        </tr>
+                        <tr class="cart-total-row">
+                            <td>**Total:**</td>
+                            <td id="cart-total">**$0.00**</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cart-actions">
+                <button id="clear-cart-button" class="secondary-button">Clear All</button>
+                
+                <a href="checkout.html" id="checkout-link" class="cta-button">Proceed to Checkout</a>
+            </div>
+        </aside>
+    </main>
+    <footer id="main-footer">
+            <div class="footer-content-wrapper">
+                <div class="footer-brand-logo">
+                    <img src="../Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo">
+                    <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
+                </div>
+
+                <div class="footer-nav-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../Codes/products.html">Products</a></li>
+                        <li><a href="../Codes/about_us.html">About Us</a></li>
+                        <li><a href="../Codes/contact_us.html">Contact Us</a></li>
+                        <li><a href="../Codes/login.html">Login / Register</a></li>
+                </ul>
+                </div>
+                <div class="footer-contact-social">
+                    <h3>Get In Touch</h3>
+                        <p>Email:<a href="mailto:info@mochibakerycafe.com"> info@mochibakerycafe.com</a></p>
+                        <p>Phone: +1 678 555-MOCHI </p>
+                </div>
+
+                <div class="social-icons">
+                    <a href="#" aria-label="Find us on Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+                </div>
+            </div>
+        </footer>
+        <script src="../script.js"></script> 
+</body>
+</html>

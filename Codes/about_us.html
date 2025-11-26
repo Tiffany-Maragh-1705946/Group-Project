@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=playfair+display">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=dm+sans">
+</head>
+<body>
+    <header id="main-header">
+        <div class="logo">
+            <img src="/Assets/1.png" alt="mochi bakery and cafe white logo" width="100" height="auto">
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li class="dropdown">
+                    <a href="products.html">Products</a>
+                    <ul class="dropdown-menu"> 
+                        <li><a href="product.html#mochi_desserts">Specialty Mochi & Desserts</a></li>
+                        <li><a href="products.html#baked_goods">Baked Goods</a></li>
+                        <li><a href="products.html#drinks">Signature Coffee & Drinks</a> </li>
+                    </ul>
+                </li>
+                <li><a href="about_us.html">About Us</a></li>
+                <li><a href="contact_us.html">Contact Us</a></li>
+            </ul>
+        </nav>
+        <div class="user-auth">
+            <a href="login.html"><button>LOGIN / REGISTER</button></a>
+            <a href="cart.html" class="cart-link">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="cart-item-count">0</span>
+            </a>
+        </div>
+
+        <div class="mobile-controls">
+            <a href="cart.html" class="cart-link mobile-cart">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-item-count-mobile">0</span>
+            </a>
+            <button id="mobile-menu-toggle" aria-label="Open Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        <!-------------------MOBILE VIEW-------------------->
+        <nav id="mobile-nav-menu">
+            <ul>
+                <li class="dropdown"><a href="products.html"> Products </a> 
+                    <ul class="dropdown-menu">
+                        <li><a href="product.html#mochi_desserts">Specialty Mochi & Desserts</a></li>
+                        <li><a href="product.html#baked-goods">Baked Goods</a></li>
+                        <li><a href="product.html#drinks"> Signature Coffee & Drinks</a></li>
+                    </ul>
+                </li>
+                <li><a href="about_us.html">About Us</a></li>
+                <li><a href="contact_us.html">Contact Us</a></li>
+                <li><a href="login.html">Login / Register</a></li>
+                <li><a href="cart.html">Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="about-page-container">
+            <h1>Our Story</h1>
+            
+            <div class="company-details">
+                <h2>The Mochi Bakery & Café Vision</h2>
+                <p class="description">Mochi Bakery & Café is a specialty online shop offering a unique 
+                    blend of high-quality coffee and artisanal baked goods, with focus on Japanese-inspired
+                    Mochi desserts, Dango, and other sweet treats. We cater to those seeking a premium, cozy, and comforting
+                    experience delivered right to their door.</p>
+                
+                <div class="mission-vision-wrapper">
+                    <div class="mission">
+                        <h3>Our Mission</h3>
+                        <p>To delight our customers by crafting and delivering the finest coffee and unique,
+                        high-quality Mochi-based desserts, fostering a sense of warmth and accessible indulgence.</p>
+                    </div>
+                    <div class="vision">
+                        <h3>Our Vision</h3>
+                        <p>To be the premier online destination for specialty coffee and innovative artisanal desserts,
+                        recognized for our quality, creativity and the joy we bring to every customer's day.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="developer-info">
+                <h2>Website Development Information</h2>
+                <p>This e-commerce website was developed as part of an Individual Assessment for the Web Programming module.</p>
+                
+                <ul>
+                    <li><strong>Developer Full Name:</strong> Tiffany Maragh</li>
+                    <li><strong>Student ID:</strong> 1705946 </li>
+                    <li><strong>Module Code & Name:</strong> CIT2011: Web Programming</li>
+                    <li><strong>Assignment Name:</strong> Individual Assessment #2 - Web Programming</li>
+                    <li><strong>Day/Time of Class:</strong> Mondays at 6pm</li>
+                    
+                    <li><strong>Company Contact:</strong><a href="mailto:tiffanysmaragh46@students.utech.edu.jm" class="mailto-link">Send us your comments and queries</a>
+                        (Directs to tiffanysmaragh46@students.utech.edu.jm)
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <aside id="cart-sidebar">
+        <div class="sidebar-header">
+            <h2>Your Sweet Haul</h2>
+            <button id="close-cart-button" aria-label="Close Shopping Cart">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="cart-items-list-container">
+            <p id="cart-empty-message">Your cart is currently empty. Start browsing our treats!</p>
+            
+            <div id="cart-items-list">
+                </div>
+        </div>
+
+        <div class="cart-summary">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Subtotal:</td>
+                        <td id="cart-subtotal">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Discount (10%):</td>
+                        <td id="cart-discount">-$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Tax (15%):</td>
+                        <td id="cart-tax">$0.00</td>
+                    </tr>
+                    <tr class="cart-total-row">
+                        <td>**Total:**</td>
+                        <td id="cart-total">**$0.00**</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cart-actions">
+            <button id="clear-cart-button" class="secondary-button">Clear All</button>
+            
+            <a href="checkout.html" id="checkout-link" class="cta-button">Proceed to Checkout</a>
+        </div>
+    </aside>
+    </main>
+    <footer id="main-footer">
+            <div class="footer-content-wrapper">
+                <div class="footer-brand-logo">
+                    <img src="../Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo">
+                    <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
+                </div>
+
+                <div class="footer-nav-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="about_us.html">About Us</a></li>
+                        <li><a href="contact_us.html">Contact Us</a></li>
+                        <li><a href="login.html">Login / Register</a></li>
+                </ul>
+                </div>
+                <div class="footer-contact-social">
+                    <h3>Get In Touch</h3>
+                        <p>Email:<a href="mailto:info@mochibakerycafe.com"> info@mochibakerycafe.com</a></p>
+                        <p>Phone: +1 678 555-MOCHI </p>
+                </div>
+
+                <div class="social-icons">
+                    <a href="#" aria-label="Find us on Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+                </div>
+            </div>
+        </footer>
+        <script src="../script.js"></script> 
+</body>
+</html>

@@ -1,0 +1,1412 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root{
+    /*========== COLORS ============*/
+    --oat-milk: #d8bea7; /*oat milk*/
+    --milk: #f6f4f1; /*milk*/
+    --matcha-accent: #a8c9a8; /*soft green*/
+    --mochi-accent: #f2c7c7; /*soft pink*/
+    --cinnamon-latte:#b79580 ; /*brown*/
+    --caramel-drizzle: #ab7843; /*brown*/
+    --roasted-chestnut: #6d3914; /*deep brown*/
+    --coffee: #3c1c0d; /*deeper brown*/
+}
+
+#main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--oat-milk);
+    padding: 15px 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position:relative;
+    min-height: 80px;
+    z-index: 1000;
+}
+
+#main-header .logo {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001;
+}
+
+#main-header .logo img {
+    height: 150px;
+    width: auto;
+}
+
+.main-nav {
+    margin-left: 150px;
+    margin-right: auto;
+    display:flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.main-nav ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 30px;
+}
+
+.main-nav ul li a {
+    text-decoration: none;
+    color: var(--roasted-chestnut);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: 0.3s ease, background-color 0.3s ease;
+    display: inline-block;
+}
+
+.main-nav ul li a:hover{
+    color: var(--milk);
+    background-color: var(--roasted-chestnut);
+}
+
+/*============= LOGIN AND CART BUTTON =========== */
+.user-auth a button {
+    background-color: var(--roasted-chestnut);
+    color: var(--milk);
+
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    transition: 0.3s ease , background-color 0.3s ease , transform 0.1s ease;
+}
+
+.user-auth a button:hover{
+    background-color: var(--coffee);
+    transform: translateY(-1);
+}
+
+.user-auth a button:active{
+    transform: translateY(0);
+}
+
+.user-auth {
+    display:flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.cart-link {
+    position: relative;
+    color: var(--roasted-chestnut);
+
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.cart-link i.fa-cart-shopping{
+    font-size: 1.8rem;
+}
+
+.cart-link:hover{
+    color:var(--coffee);
+}
+
+#cart-item-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+
+    background-color: var(--matcha-accent);
+
+    color: var(--milk);
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    line-height: 1;
+    z-index: 10;
+
+    display: none;
+}
+
+/*========= DROPDOWN SECTION ========== */
+
+.main-nav ul li.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none; /*hides menu by default*/
+    position: absolute;
+    background-color: var(--oat-milk);
+    min-width: 250px;
+    box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.15);
+    z-index: 5;
+    top: 100%;
+    left: 0;
+    padding: 10px 0;
+    border-radius: 5px;
+    list-style: none;
+    margin: 0;
+}
+
+.dropdown-menu li a {
+    color: var(--roasted-chestnut);
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-transform: none;
+    background-color: transparent;
+    border-radius: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-menu li a:hover{
+    background-color: var(--cinnamon-latte);
+    color: var(--milk)
+}
+
+.dropdown:hover .dropdown-menu{
+    display: block;
+}
+/*==== OVERRIDE ===== */
+.main-nav ul .dropdown-menu {
+    display: none;
+}
+
+.mobile-controls , #mobile-nav-menu {
+    display: none;
+}
+
+.hero-section-container {
+    position: relative;
+    height: 60vh;
+    min-height: 600px;
+
+    /*layout*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: self-start;
+
+    padding-left: 10%;
+    color: var(--milk);
+    overflow: hidden;
+}
+
+.hero-background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.hero-background-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+}
+
+.hero-section-container h1 {
+    font-family: 'Playfair Display' , serif;
+    font-size: 4rem;
+    color:var(--milk);
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+}
+
+/*styling CTA button*/
+.hero-cta-button {
+    text-decoration: none;
+    background-color: var(--coffee);
+    color: var(--milk);
+    padding: 15px 30px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    transition: 0.3s ease , background-color 0.3s ease , transform 0.1s ease;
+
+}
+
+.hero-cta-button:hover {
+    background-color: var(--matcha-accent);
+    transform: translateY(-2px);
+}
+
+/*======= Category Section ======== */
+.category-section-container {
+    padding: 80px 5%;
+    text-align: center;
+    background-color: var(--milk);
+}
+.category-section-container h2{
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--coffee);
+    margin-bottom: 40px;
+}
+.category-cards-wrapper {
+    display: grid;
+    grid-template-columns: (3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+
+}
+.category-card {
+    background-color: var(--oat-milk);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+.category-card:hover{
+    transform: translateY(-5px);
+}
+.category-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+.category-card h3 {
+    font-family: 'DM Sans' , sans-serif;
+    font-size: 1.2rem;
+    color: var(--roasted-chestnut);
+    padding: 15px 10px 10px;
+}
+.view-all-button{
+    display: block;
+    text-decoration: none;
+    background-color: var(--roasted-chestnut);
+    color: var(--milk);
+    padding: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.3 ease;
+}
+.view-all-button:hover{
+    background-color: var(--matcha-accent);
+    color:var(--coffee);
+}
+
+/*======= FEATURED SECTION ======= */
+.featured-section-container {
+    padding: 80px 5%;
+    text-align: center;
+    background-color: var(--milk);
+}
+.featured-section-container h2{
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--coffee);
+    margin-bottom: 40px;
+}
+.product-cards-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+
+}
+.product-card {
+    background-color: var(--milk);
+    border-radius: 8px;
+    overflow: hidden;
+    padding-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.01);
+    transition: transform 0.3s ease;
+}
+.product-card:hover{
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+.product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+.product-card h3 {
+    font-size: 1.1rem;
+    color: var(--roasted-chestnut);
+    margin: 10px 0 5px;
+}
+.product-card .price {
+    color: var(--roasted-chestnut);
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+.add-to-cart-button {
+    background-color: var(--matcha-accent);
+    color: var(--coffee);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+.add-to-cart-button:hover{
+    background-color: var(--mochi-accent);
+    color: var(--coffee);
+}
+/*============ABOUT-US SECTION ====================*/
+.about-section-container {
+    background-color: var(--milk);
+    padding: 80px 5%;
+    max-width: 1200 px;
+    margin: 0 auto;
+
+    /*flexbox for 2 column layout*/
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+.about-section-container img{
+    flex: 1 1 40%; /*flex-grow: 1, flex-shrink: 1, flex-basis: 40%*/
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.about-section-container > div {
+    flex: 1 1 60%;  /*flex-grow: 1, flex-shrink: 1, flex-basis: 40%*/
+    text-align: left;
+}
+.about-section-container h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--coffee);
+    margin-bottom: 20px;
+}
+
+.about-section-container p{
+    font-family: 'DM Sans', sans-serif;
+    color: var(--roasted-chestnut);
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+.read-more-button {
+    text-decoration: none;
+    display: inline-block;
+    background-color: transparent;
+    color: var(--roasted-chestnut);
+    padding: 10px 25px;
+    border: 2px solid var(--roasted-chestnut);
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.read-more-button:hover{
+    background-color: var(--mochi-accent);
+    border-color: var(--mochi-accent);
+    color: var(--milk);
+}
+
+/* IA#2: Form Styling - Login/Registration Pages */
+/* QUESTION: Consistency & Theme (4c) */
+
+.auth-container {
+    /* Center the container on the page */
+    max-width: 450px; 
+    margin: 80px auto; /* 80px top/bottom margin, auto centers horizontally */
+    padding: 40px;
+    
+    /* Style the container to look like a clean card */
+    background-color: var(--oat-milk); 
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Center the h2 */
+}
+
+.auth-container h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--coffee);
+    margin-bottom: 30px;
+}
+
+.auth-container p {
+    margin-top: 20px;
+    color: var(--roasted-chestnut);
+    font-size: 0.9rem;
+}
+.auth-container form {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    text-align: left;
+}
+
+.auth-container label {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--roasted-chestnut);
+    font-weight: 600;
+    margin-bottom: 5px;
+    margin-top: 15px;
+    font-size: 0.95rem;
+}
+
+.auth-container input[type="text"],
+.auth-container input[type="email"],
+.auth-container input[type="password"],
+.auth-container input[type="date"] {
+    /* Selector: Attribute selector */
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--cinnamon-latte); /* Soft border color */
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    background-color: var(--milk); /* White background for input fields */
+    transition: border-color 0.3s ease;
+}
+
+.auth-container input:focus {
+    /* Selector: Pseudo-class selector (:focus) */
+    border-color: var(--matcha-accent); /* Green focus border for quality/freshness feel */
+    outline: none; /* Removes default browser outline */
+}
+/* Re-style the general CTA button for the forms (using Mochi Pink) */
+.auth-container .cta-button {
+    background-color: var(--mochi-accent); /* Mochi Pink CTA */
+    color: var(--coffee);
+    border: none;
+    padding: 12px 20px;
+    margin-top: 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.auth-container .cta-button:hover {
+    background-color: var(--roasted-chestnut); 
+    color: var(--milk);
+}
+.auth-container a {
+    color: var(--roasted-chestnut);
+    text-decoration: none;
+    font-weight: 600;
+}
+.auth-container a:hover {
+    text-decoration: underline;
+}
+
+/* New style for error messages - these will appear when validation fails */
+.error-message {
+    color: var(--mochi-accent); /* A soft pink for error messages */
+    font-size: 0.85rem;
+    margin-top: -8px; /* Pull it slightly up to be closer to the input */
+    margin-bottom: 10px;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* IA#2: About Us Page Styling */
+
+.about-page-container {
+    max-width: 1000px;
+    margin: 40px auto 80px auto;
+    padding: 0 5%;
+    text-align: center;
+}
+
+.about-page-container h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--coffee);
+    margin-bottom: 50px;
+    border-bottom: 2px solid var(--oat-milk);
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+.company-details {
+    padding: 40px;
+    background-color: var(--oat-milk);
+    border-radius: 10px;
+    margin-bottom: 60px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.company-details h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: var(--roasted-chestnut);
+}
+
+/* Mission and Vision Layout (Using Flexbox) */
+.mission-vision-wrapper {
+    display: flex;
+    gap: 30px;
+    text-align: left;
+    margin-top: 30px;
+}
+.mission, .vision {
+    flex: 1;
+    padding: 20px;
+    background-color: var(--milk);
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+.mission h3, .vision h3 {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--matcha-accent); /* Use an accent color for section titles */
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.description {
+    color: var(--roasted-chestnut);
+    line-height: 1.6;
+}
+
+/* Developer Info Styling */
+.developer-info {
+    text-align: left;
+    padding: 20px 0;
+}
+.developer-info h2 {
+    font-size: 1.8rem;
+    color: var(--coffee);
+    margin-bottom: 20px;
+}
+.developer-info ul {
+    list-style: none;
+    padding: 0;
+}
+.developer-info li {
+    font-family: 'DM Sans', sans-serif;
+    margin-bottom: 10px;
+    color: var(--roasted-chestnut);
+}
+
+.mailto-link {
+    color: var(--mochi-accent); /* Use pink accent color */
+    text-decoration: none;
+    font-weight: 600;
+}
+.mailto-link:hover {
+    text-decoration: underline;
+}
+
+/* IA#2: Contact Us Page Styling */
+
+.contact-page-container {
+    max-width: 1100px;
+    margin: 60px auto 80px auto;
+    padding: 0 5%;
+    text-align: center;
+}
+
+.contact-page-container h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--coffee);
+    margin-bottom: 40px;
+}
+
+/* Flexbox Layout for the Info Card and Form */
+.contact-form-wrapper {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start; /* Aligns items to the top */
+}
+
+/* Base style for the form container (reusing the .auth-container styles) */
+#contact-form {
+    flex: 1; /* Allows the form to take up half the space */
+    padding: 30px;
+    /* The rest of the styling (background, border-radius) comes from .auth-container */
+}
+.contact-info-card {
+    flex: 1; /* Allows the info card to take up half the space */
+    padding: 30px;
+    background-color: var(--oat-milk);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.contact-info-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--roasted-chestnut);
+    margin-bottom: 25px;
+}
+
+.detail-item {
+    font-size: 1rem;
+    color: var(--coffee);
+    margin-bottom: 15px;
+}
+.detail-item i {
+    margin-right: 10px;
+    color: var(--matcha-accent); /* Use a fresh accent color for icons */
+}
+
+/* ================Textarea Styling ================*/
+#contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--cinnamon-latte);
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    resize: vertical; /* Only allow vertical resizing */
+    margin-bottom: 15px;
+}
+.assignment-mailto {
+    color: var(--roasted-chestnut);
+    margin-top: 40px;
+    font-weight: 600;
+}
+
+.mailto-link-cta {
+    display: inline-block;
+    text-decoration: none;
+    background-color: var(--mochi-accent);
+    color: var(--coffee);
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: 700;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.mailto-link-cta:hover {
+    background-color: var(--matcha-accent);
+}
+/* Mobile Responsiveness for Contact Page */
+@media screen and (max-width: 768px) {
+    .contact-form-wrapper {
+        flex-direction: column; /* Stack the card and form vertically on mobile */
+    }
+    .contact-info-card, #contact-form {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+/* ==================Mobile Responsiveness for About Page=================== */
+@media screen and (max-width: 768px) {
+    .mission-vision-wrapper {
+        flex-direction: column; /* Stack mission and vision vertically on smaller screens */
+    }
+}
+
+/*============MOBILE SECTION ====================*/
+@media screen and (max-width: 900px) {
+    #main-header {
+        position: relative; 
+        padding: 15px 20px;
+        min-height: 70px; 
+    }
+
+    #main-header .logo {
+        position: relative; 
+        left: auto;
+        top: auto;
+        transform: none;
+        z-index: auto;
+    }
+
+    #main-header .logo img {
+        height: 80px; /* Smaller logo for mobile */
+    }
+
+    /* ======== HIDE DESKTOP, SHOW MOBILE ========== */
+    .main-nav, .user-auth {
+        display: none !important; 
+    }
+
+    /*======== SHOW MOBILE CONTROLS CONTAINER ======== */
+    .mobile-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    /*====== STYLE HAMBURGER MENU ======= */
+    #mobile-menu-toggle {
+        background: none;
+        border: none;
+        color: var(--roasted-chestnut);
+        font-size: 1.8rem;
+        cursor: pointer;
+    }
+
+    /* ===== 3. OFF-CANVAS MOBILE MENU STYLING ===== */
+    #mobile-nav-menu {
+        position: fixed; /* Fixed relative to the viewport */
+        top: 70px; 
+        right: 0;
+        width: 100%; 
+        max-width: 300px; /* Limits the menu width on tablets/large phones */
+        height: 100%;
+        background-color: var(--oat-milk);
+        box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+        overflow-y: auto; 
+        
+        /* Initial state: Pushes the menu off the screen to the right */
+        transform: translateX(100%); 
+        transition: transform 0.3s ease-out;
+        display: block; 
+    }
+
+    /* ======= State when JS adds the 'active' class ======= */
+    #mobile-nav-menu.active {
+        transform: translateX(0); /* Slides the menu into view */
+    }
+
+    /* ==== STACK VERTICALLY ==== */
+    #mobile-nav-menu ul {
+        list-style: none;
+        padding: 20px;
+        margin: 0;
+        display: block;
+    }
+
+    #mobile-nav-menu ul li a {
+        display: block;
+        padding: 15px 0;
+        color: var(--coffee);
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+    /* ==== remove border from last menu item ===== */
+    #mobile-nav-menu ul li :last-child a {
+        border-bottom: none;
+    }
+    /* --- 1. HERO SECTION ADJUSTMENTS --- */
+    .hero-section-container {
+        height: 50vh; /* Make the hero section a bit shorter on mobile */
+        min-height: 400px;
+        padding-left: 5%; /* Reduced side padding */
+        align-items: center; /* Center the text content horizontally on mobile */
+    }
+    .hero-background-image img {
+        object-position: center center;
+    }
+    .hero-section-container h1 {
+        font-size: 2.5rem; /* Smaller headline for mobile readability */
+        text-align: center;
+    }
+    /* --- 2. CATEGORY & FEATURED SECTIONS (Stacking the Grids) --- */
+    
+    /* Target both wrappers to stack into a single column */
+    .category-cards-wrapper,
+    .product-cards-wrapper {
+        grid-template-columns: 1fr; /* CRITICAL: Changes the 3-column grid to a single column */
+        gap: 20px; /* Reduced gap between items */
+    }
+
+    /* --- 3. ABOUT US SECTION (Stacking the Flexbox) --- */
+    .about-section-container {
+        flex-direction: column; /* CRITICAL: Stacks the image and text vertically */
+        gap: 30px; 
+    }
+    /* Ensure the image and text block take up 100% width when stacked */
+    .about-section-container img,
+    .about-section-container > div {
+        flex: 1 1 100%; /* Resets flex-basis to 100% */
+        max-width: 100%;
+        text-align: center; /* Center text/button under image */
+    }
+    
+    /* Center the Read More button on mobile */
+    .about-section-container > div a {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* --- 4. FOOTER SECTION ADJUSTMENTS --- */
+    .footer-content-wrapper {
+        flex-direction: column; /* Stack all footer columns vertically */
+        gap: 30px;
+        text-align: center;
+    }
+    
+    /* Center text within each footer column */
+    .footer-brand-logo, 
+    .footer-nav-links, 
+    .footer-content-social {
+        min-width: 100%; /* Ensure columns take full width */
+        text-align: center;
+    }
+
+    /* Center the social media icons container */
+    .social-icons {
+        justify-content: center;
+        display: flex;
+        /* Ensure social icons section is correctly visible if separate in HTML */
+    }
+
+    /* Center the navigation list items */
+    #main-footer ul {
+        display: block; 
+        text-align: center;
+    }
+}
+
+/* IA#2: Products Page Styling */
+
+.products-main-content {
+    max-width: 1200px;
+    margin: 40px auto 80px auto;
+    padding: 0 5%;
+}
+
+.products-main-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    color: var(--coffee);
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.product-category-section {
+    padding-top: 60px; /* Provides space for scrolling/jumping from the dropdown links */
+    margin-bottom: 60px;
+    border-bottom: 1px solid var(--oat-milk);
+}
+
+.product-category-section:last-child {
+    border-bottom: none; /* No border for the last section */
+}
+
+.product-category-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--roasted-chestnut);
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.category-description {
+    color: var(--cinnamon-latte);
+    margin-bottom: 30px;
+    font-style: italic;
+    text-align: left;
+}
+
+/* Product Card Grid (Shared with Homepage, but adjust grid for Products Page) */
+.product-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for product page */
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+/* Individual Product Card Styling (can be shared with homepage) */
+.product-card {
+    background-color: var(--oat-milk);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    display: flex; /* Make it a flex container */
+    flex-direction: column; /* Stack contents vertically */
+    justify-content: space-between; /* Pushes button to bottom */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.product-card img {
+    max-width: 100%;
+    height: 150px; /* Fixed height for consistent card size */
+    object-fit: contain; /* Ensures entire image is visible without cropping */
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.product-card h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.15rem;
+    color: var(--coffee);
+    margin-bottom: 10px;
+    min-height: 40px; /* Ensure consistent height for titles */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-card .price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--milk);
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+/* Add to Cart Button Styling */
+.add-to-cart-button {
+    background-color: var(--mochi-accent);
+    color: var(--coffee);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Make button full width of card */
+}
+
+.add-to-cart-button:hover {
+    background-color: var(--roasted-chestnut);
+    color: var(--milk);
+}
+
+/* Mobile Responsiveness for Products Grid */
+@media screen and (max-width: 1200px) {
+    .product-grid-wrapper {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns on medium screens */
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .product-grid-wrapper {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .product-grid-wrapper {
+        grid-template-columns: 1fr; /* 1 column on small mobiles */
+    }
+    .products-main-content h1 {
+        font-size: 2.5rem;
+    }
+    .product-category-section h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* IA#2: Off-Canvas Cart Sidebar Styling */
+
+#cart-sidebar {
+    position: fixed; /* Stays in the same position relative to the viewport */
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px; /* Standard width for a sidebar */
+    height: 100%;
+    background-color: var(--milk); 
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 2000; /* Ensures it sits above everything else, including the header */
+    padding: 20px;
+    
+    /* Initial State: Hides the menu off-screen */
+    transform: translateX(100%); 
+    transition: transform 0.4s ease-out; /* Smooth sliding animation */
+    
+    display: flex;
+    flex-direction: column;
+}
+
+/* State when JS adds the 'open' class */
+#cart-sidebar.open {
+    transform: translateX(0); /* Slides the menu into view */
+}
+
+/* --- Header and Close Button --- */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--oat-milk);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+.sidebar-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--coffee);
+}
+#close-cart-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--roasted-chestnut);
+    cursor: pointer;
+}
+
+/* --- Cart Items List Area --- */
+.cart-items-list-container {
+    flex-grow: 1; /* Allows the list to fill the vertical space */
+    overflow-y: auto; /* Enables scrolling if items overflow */
+}
+#cart-empty-message {
+    color: var(--cinnamon-latte);
+    text-align: center;
+    padding: 30px 10px;
+}
+/* Styling for dynamically created items (Simplified) */
+#cart-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* --- Summary and Actions --- */
+.cart-summary table {
+    width: 100%;
+    margin-top: 20px;
+    border-top: 1px solid var(--oat-milk);
+    padding-top: 15px;
+    font-size: 1rem;
+    color: var(--roasted-chestnut);
+}
+.cart-summary td:nth-child(2) {
+    text-align: right; /* Align numbers to the right */
+    font-weight: 600;
+}
+.cart-total-row td {
+    font-size: 1.2rem;
+    font-weight: 700 !important;
+    color: var(--coffee);
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+    border-top: 1px solid (var(--oat-milk));
+    margin-top: 20px;
+}
+.cart-actions .cta-button {
+    /* Styles shared with your general CTA button */
+    background-color: var(--mochi-accent);
+    color: var(--coffee);
+    border: none;
+    text-decoration: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    padding: 12px 15px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for CTA */
+    flex: 1;
+    margin-left: 10px;
+    text-align: center;
+}
+.cart-actions .secondary-button {
+    /* Clear button style */
+    background-color: transparent;
+    border: 2px solid var(--roasted-chestnut);
+    color: var(--roasted-chestnut);
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    flex: 1;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for CTA */
+    margin-right: 10px;
+}
+.cart-actions .cta-button:hover {
+    background-color: var(--roasted-chestnut);
+    color: var(--milk);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.cart-actions .secondary-button:hover {
+    background-color: var(--roasted-chestnut);
+    color: var(--milk);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* IA#2: Checkout Page Styling */
+/* QUESTION: Layout & Positioning (4b) */
+
+.checkout-page-container {
+    max-width: 1200px;
+    margin: 40px auto 80px auto;
+    padding: 0 5%;
+}
+
+.checkout-page-container h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--coffee);
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.checkout-wrapper {
+    display: flex;
+    gap: 40px; /* Space between the shipping form and the summary card */
+    align-items: flex-start; /* Keeps columns aligned to the top */
+}
+
+/* === Column Sizing === */
+.shipping-payment-form {
+    flex: 2; /* Gives the form column more space (e.g., 60% width) */
+}
+
+.order-summary-card {
+    flex: 1; /* Gives the summary column less space (e.g., 40% width) */
+}
+/* Style for form groups */
+#shipping-form {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    background-color: var(--oat-milk);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.shipping-payment-form h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--roasted-chestnut);
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.form-group label {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--coffee);
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+/* Reusing input styles for consistency */
+#shipping-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--cinnamon-latte);
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    background-color: var(--milk);
+}
+
+#shipping-form input:focus {
+    border-color: var(--matcha-accent);
+    outline: none;
+}
+
+/* Order Summary Card Styling */
+.order-summary-card {
+    background-color: var(--milk);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--coffee);
+    margin-bottom: 20px;
+}
+
+#checkout-item-list {
+    min-height: 150px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-bottom: 15px;
+}
+
+/* Style for individual items in the summary */
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 0.95rem;
+    color: var(--roasted-chestnut);
+}
+
+.summary-totals-table {
+    width: 100%;
+    color: var(--roasted-chestnut);
+}
+.summary-totals-table td {
+    padding: 5px 0;
+}
+.summary-totals-table td:nth-child(2) {
+    text-align: right;
+    font-weight: 600;
+}
+
+.final-total-row td {
+    font-size: 1.3rem;
+    color: var(--coffee);
+    font-weight: 700 !important;
+    padding-top: 15px;
+    border-top: 2px solid var(--cinnamon-latte);
+}
+.checkout-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+#confirm-button {
+    flex-grow: 1;
+    margin-left: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+    border: none;
+}
+
+#cancel-button {
+    /* Reuses secondary button style */
+    flex-grow: 1;
+    margin-right: 10px;
+    font-size: 1.1rem;
+    background-color: transparent;
+    border: 2px solid var(--cinnamon-latte);
+    color: var(--cinnamon-latte);
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+}
+
+#cancel-button:hover {
+    background-color: var(--cinnamon-latte);
+    color: var(--milk);
+}
+#confirm-button:hover {
+    background-color: var(--cinnamon-latte);
+    color: var(--milk);
+}
+
+/* Mobile Responsiveness for Checkout Page */
+@media screen and (max-width: 900px) {
+    .checkout-wrapper {
+        flex-direction: column; /* Stack both columns vertically */
+    }
+    
+    .shipping-payment-form,
+    .order-summary-card {
+        flex: none; /* Reset flex sizing */
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+}
+/*============STYLE THE FOOTER ====================*/
+#main-footer {
+    background-color: var(--coffee);
+    color: var(--oat-milk);
+    padding: 60px 5%;
+    font-family: 'DM Sans', sans-serif;
+    border-top: 5px solid var(--roasted-chestnut);
+}
+.footer-content-wrapper {
+    display: flex;
+    justify-content:space-between;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+.footer-brand-logo, .footer-nav-links, .footer-content-social {
+    flex-basis: 22%;
+    min-width: 180px;
+}
+#main-footer h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--milk); /* Pure white/milk color for headings */
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+/* === Logo and Copyright === */
+.footer-logo {
+    height: 90px; 
+    width: auto;
+    margin-bottom: 15px;
+}
+.footer-brand-logo p {
+    font-size: 0.85rem;
+    color: var(--cinnamon-latte); 
+}
+#main-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#main-footer ul li {
+    margin-bottom: 8px;
+}
+#main-footer a {
+    text-decoration: none;
+    color: var(--oat-milk);
+    transition: color 0.3s ease;
+}
+#main-footer a:hover{
+    color: var(--matcha-accent);
+}
+.footer-content-social p{
+    margin-bottom: 10px;
+}
+.social-icons a {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    color: var(--oat-milk);
+    transition: color 0.3s ease;
+}
+.social-icons a:hover {
+    color: var(--matcha-accent);
+}
