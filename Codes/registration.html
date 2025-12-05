@@ -67,31 +67,53 @@
         <h2>Create an Account</h2>
         
         <form id="registration-form" onsubmit="return validateForm()"> 
-            
-            <label for="reg-name">Full Name:</label>
-            <input type="text" id="reg-name" required>
-            <span id="name-error" class="error-message"></span> 
-            
+                            <!--------TRN Input -------->
+            <label for="reg-trn">TRN (Tax Registration Number):</label>
+            <input type="text" id="reg-trn" required placeholder="000-000-000">
+            <span id="trn-error" class="error-message"></span>
+                            <!--------First Name Input -------->
+            <label for="reg-first-name">First Name:</label>
+            <input type="text" id="reg-first-name" required placeholder="Your First Name">
+            <span id="first-name-error" class="error-message"></span>
+                            <!--------Last Name Input -------->
+            <label for="reg-last-name">Last Name:</label>   
+            <input type="text" id="reg-last-name" required placeholder="Your Last Name">
+            <span id="last-name-error" class="error-message"></span>
+                            <!--------Username Input -------->
             <label for="reg-username">Username:</label>
             <input type="text" id="reg-username" required>
             <span id="username-error" class="error-message"></span>
-            
+                            <!--------Phone Number Input -------->
+            <label for="reg-phone">Phone Number:</label>
+            <input type="text" id="reg-phone" required placeholder="876-xxx-xxxx">
+            <span id="phone-error" class="error-message"></span>
+                            <!--------Date of Birth Input -------->
             <label for="reg-dob">Date of Birth:</label>
             <input type="date" id="reg-dob" required>
-            
+            <span id="dob-error" class="error-message"></span>
+                            <!--------Email Input -------->
             <label for="reg-email">Email:</label>
-            <input type="email" id="reg-email" required>
+            <input type="email" id="reg-email" required placeholder="your@email.com">
             <span id="email-error" class="error-message"></span>
-            
+                            <!--------Password Input -------->
             <label for="reg-password">Password:</label>
             <input type="password" id="reg-password" required>
             <span id="password-error" class="error-message"></span>
-            
+                            <!--------Confirm Password Input -------->
             <label for="reg-confirm-password">Confirm Password:</label>
             <input type="password" id="reg-confirm-password" required>
             <span id="confirm-password-error" class="error-message"></span>
-            
-            <button type="submit" class="cta-button">Register</button>
+                            <!--------Gender Input -------->
+            <label for="reg-gender">Gender:</label>
+            <select id="reg-gender" required>
+                <option value="">-- Select Gender --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <span id="gender-error" class="error-message"></span>
+                            <!--------Submit and Cancel Buttons -------->
+            <button type="submit" id="register-button" class="cta-button">Register</button>
+            <button type="button" id="cancel-reg-button" class="secondary-button">Cancel</button> 
         </form>
         
         <p>Already have an account? <a href="login.html">Log in here</a></p>

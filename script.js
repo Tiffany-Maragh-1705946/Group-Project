@@ -100,84 +100,181 @@ if (loginForm) {
     loginForm.addEventListener('submit', handleLogin);
 }
 
-/* User-Defined Function - validateForm() */
-/* Purpose: Check required fields, email format, and password matching. */
+/* User-Defined Function - saveRegistrationData() */
+/* Purpose: Stores a new user's complete registration data in local storage. */
 /* Creator: Tiffany Maragh 1705946 */
-function validateForm() {
-    // 1. Get elements by ID (DOM Manipulation)
-    const nameInput = document.getElementById('reg-name');
-    const emailInput = document.getElementById('reg-email');
-    const usernameInput = document.getElementById('reg-username');
-    const passwordInput = document.getElementById('reg-password');
-    const confirmPasswordInput = document.getElementById('reg-confirm-password');
+function saveRegistrationData(userData){
+    // Retrieve existing registration data or initialize an empty array
+    let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+    // Add the new user's data to the array
+    registeredUsers.push(userData);
+    // Save the updated array back to local storage
+    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+    console.log("User registered:", userData.email, "Total registered users:", registeredUsers.length);
 
-    // Error feedback spans (DOM Manipulation target)
-    const nameError = document.getElementById('name-error');
-    const emailError = document.getElementById('email-error');
-    const usernameError = document.getElementById('username-error');
-    const passwordError = document.getElementById('password-error');
-    const confirmPasswordError = document.getElementById('confirm-password-error');
-    
-    // Clear previous errors
-    nameError.textContent = '';
-    emailError.textContent = '';
-    usernameError.textContent = '';
-    passwordError.textContent = '';
-    confirmPasswordError.textContent = '';
-
-    let isValid = true; // Flag to track overall form validity
-    // Regex for basic email format validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
-
-    // --- Validation Checks (Control Structures) ---
-
-    // 2. Check Full Name for emptiness
-    if (nameInput.value.trim() === "") {
-        nameError.textContent = "Full Name is required.";
-        isValid = false;
-    }
-
-    // 3. Check Username for emptiness
-    if (usernameInput.value.trim() === "") {
-        usernameError.textContent = "Username is required.";
-        isValid = false;
-    }
-
-    // 4. Check Email validity (Emptiness and Format Check)
-    if (emailInput.value.trim() === "") {
-        emailError.textContent = "Email is required.";
-        isValid = false;
-    } else if (!emailPattern.test(emailInput.value.trim())) {
-        emailError.textContent = "Invalid email format.";
-        isValid = false;
-    }
-    
-    // 5. Check Password for emptiness
-    if (passwordInput.value === "") {
-        passwordError.textContent = "Password is required.";
-        isValid = false;
-    } 
-
-    // 6. Check if Confirm Password matches Password (Logic/Control Structures)
-    if (confirmPasswordInput.value === "") {
-        confirmPasswordError.textContent = "Please confirm your password.";
-        isValid = false;
-    } else if (passwordInput.value !== confirmPasswordInput.value) {
-        // Correct arithmetic calculation (comparison is logic, not arithmetic, but uses correct comparison)
-        confirmPasswordError.textContent = "Passwords do not match."; 
-        isValid = false;
-    }
-
-    // If validation passes, simulate successful registration
-    if (isValid) {
-        alert("Registration form data is valid! (Simulation complete)");
-        
-    }
-    
-    return isValid; // Returns true to allow form submission, false to prevent it
 }
-/* IA#2: Event Handling - Cart Sidebar Toggle */
+
+/* User-Defined Function - validateForm() */
+/* Purpose: Performs comprehensive client-side validation for all registration fields. */
 /* Creator: Tiffany Maragh 1705946 */
+
+function validateForm() {
+    let isValid = true; // Flag to track overall form validity
+    // Helper to get element and clear previous error message
+    const getField = (id) => document.getElementById(id);
+    const clearError = (id) => {
+        const span = document.getElementById(id);
+        if (span) span.textContent = '';
+    };
+    // Clear all previous error messages
+    ['first-name-error', 'last-name-error', 'username-error', 'email-error',  'password-error', 'confirm-password-error', 'trn-error', 'phone-error', 'dob-error', 'gender-error' ].forEach(clearError);
+
+    //Get form field values
+    const firstName = getField('reg-first-name').value.trim();
+    const lastName = getField('reg-last-name').value.trim();
+    const username = getField('reg-username').value.trim();
+    const email = getField('reg-email').value.trim();
+    const password = getField('reg-password').value;
+    const confirmPassword = getField('reg-confirm-password').value;
+    const trn = getField('reg-trn').value.trim();
+    const phone = getField('reg-phone').value.trim();
+    const dob = getField('reg-dob').value;
+    const gender = getField('reg-gender').value;   
+
+    // Validation Checks for Each Field
+    if (firstName === '') { 
+        getField('first-name-error').textContent = 'First Name is required.';
+        isValid = false;
+    }
+    if (lastName === '') { 
+        getField('last-name-error').textContent = 'Last Name is required.';
+        isValid = false;
+    }
+    if (username === '') {
+        getField('username-error').textContent = 'Username is required.';
+        isValid = false;
+    } else if (username.length < 5) {
+        getField('username-error').textContent = 'Username must be at least 5 characters.';
+        isValid = false;
+    }
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email === '') {
+        getField('email-error').textContent = 'Email is required.';
+        isValid = false;
+    }   else if (!regexEmail.test(email)) {
+        getField('email-error').textContent = 'Invalid email format.';
+        isValid = false;
+    }
+    if (password === '') {
+        getField('password-error').textContent = 'Password is required.';
+        isValid = false;
+    } else if (password.length < 8) {
+        getField('password-error').textContent = 'Password must be at least 8 characters.';
+        isValid = false;
+    }
+    // Add more password complexity checks (e.g., uppercase, lowercase, number, special character)
+    const passwordComplexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordComplexityRegex.test(password)) {
+        getField('password-error').textContent = "Password needs 1 uppercase, 1 lowercase, 1 number, 1 special character.";
+        isValid = false;
+    }
+    //confirm password check
+    if (password === '') {
+        getField('confirm-password-error').textContent = 'Please confirm your password.';
+        isValid = false;
+    } else if (confirmPassword !== password) {
+        getField('confirm-password-error').textContent = 'Passwords do not match.';
+        isValid = false;
+    }
+    const regexTRN = /^\d{3}-\d{3}-\d{3}$/;
+    if (trn === '') {
+        getField('trn-error').textContent = 'TRN is required.';
+        isValid = false;
+    } else if (!regexTRN.test(trn)) {
+        getField('trn-error').textContent = 'TRN must be exactly 9 digits in format 000-000-000.';
+        isValid = false;
+    } else { //check for duplicate TRN in system to prevent multiple registrations
+        let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        if (registeredUsers.some(user => user.trn === trn)) {
+            getField('trn-error').textContent = 'This TRN is already registered.';
+            isValid = false;
+        }
+    }
+    //phone number 
+    const regexPhone = /^(876)-\d{3}-\d{4}$/; // Example: 876-XXX-XXXX
+    if (phone === '') {
+        getField('phone-error').textContent = 'Phone Number is required.';
+        isValid = false;
+    } else if (!regexPhone.test(phone)) {
+        getField('phone-error').textContent = 'Phone Number must be in format 876-XXX-XXXX.';
+        isValid = false;
+    }
+    //date of birth where the age must be at least 18
+    if (dob === '') {
+        getField('dob-error').textContent = 'Date of Birth is required.';
+        isValid = false;
+    } else {    
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age < 18) {
+            getField('dob-error').textContent = 'You must be at least 18 years old to register.';
+            isValid = false;
+        }
+    }
+    //gender
+    if (gender === '') {            
+        getField('gender-error').textContent = 'Please select a gender.';
+        isValid = false;
+    }
+    // After all validations, if valid, save the data
+    if (isValid) {
+        const userData = {
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        password: password,
+        trn: trn,
+        phone: phone,
+        dob: dob,
+        gender: gender,
+        registeredAt: new Date().toISOString()
+        };
+        saveRegistrationData(userData); //Saves the user data to local storage
+        alert('Registration Successful! You can now log in.');
+        window.location.href = './login.html'; //redirect to login page after successful registration
+        return;
+    }
+    return false; // prevent form submission due to validation errors
+}
+
+/* IA#2 Group Project: Event Handling - handleCancelRegistration() 
+    Purpose: Handles the cancellation of the registration process.*/
+function handleCancelRegistration() {   
+    const confirmation = confirm("Are you sure you want to cancel your registration? All entered data will be lost.");
+    if (confirmation) {
+        // Redirect to the homepage or products page
+        window.location.href = '../index.html'; 
+    }
+}
+
+/* Attach event listener to the Cancel Registration button */
+        document.addEventListener('DOMContentLoaded', () => {
+        const cancelRegButton = document.getElementById('cancel-registration-button');
+        if (cancelRegButton) {
+        cancelRegButton.addEventListener('click', handleCancelRegistration);
+        }
+    });
+
+
+
+    /*IA#2: Event Handling - Cart Sidebar Toggle
+    Creator: Tiffany Maragh 1705946 */
 
 const cartSidebar = document.getElementById('cart-sidebar');
 const openCartButtons = document.querySelectorAll('.cart-link'); // Selects all cart icons
