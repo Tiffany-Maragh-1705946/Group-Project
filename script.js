@@ -305,6 +305,65 @@ openCartButtons.forEach(button => {
 if (closeCartButton) {
     closeCartButton.addEventListener('click', closeCartSidebar);
 }
+/* ============================
+   PRODUCT LIST & ADD TO CART
+  Dhi-andra Neath
+============================ */
+
+const products = [
+    { id: 'M001', name: 'Strawberry Daifuku', price: 3.99, description: 'Pink strawberry mochi dessert.', image: '../Assets/Strawberry Cheesecake Mochi.png', category: 'mochi' },
+    { id: 'M002', name: 'Matcha Cheesecake', price: 4.99, description: 'Creamy classic cheesecake with Japanese matcha.', image: '../Assets/matchaCheesecake.png', category: 'mochi' },
+    { id: 'M003', name: 'Matcha Espresso Dango', price: 5.50, description: 'Colorful glutinous rice dessert on a skewer with matcha and espresso flavor', image: '../Assets/Matcha Espresso Dango.png', category: 'mochi' },
+    { id: 'B001', name: 'Caramel Drizzle Scone', price: 4.25, description: 'A scone topped with caramel drizzle', image: '../Assets/Caramel Drizzle Scones.png', category: 'baked' },
+    { id: 'B002', name: 'Cinnamon Swirl', price: 3.50, description: 'A warm, sticky cinnamon swirl.', image: '../Assets/Cinnamon Latte Swirls.png', category: 'baked' },
+    { id: 'B003', name: 'Oat Milk Banana Bread', price: 4.75, description: 'Moist loaf of banana bread. Made with oat milk.', image: '../Assets/Oat Milk Banana Bread.png', category: 'baked' },
+    { id: 'D003', name: 'The Daily Grind Coffee', price: 14.00, description: 'Bag of coffee beans.', image: '../Assets/House Blend - The Daily Grind.png', category: 'drink' },
+    { id: 'D004', name: 'Single-Origin Beans', price: 18.50, description: 'Bag of premium single-origin espresso beans.', image: '../Assets/Single-Origin Espresso Beans.png', category: 'drink' },
+    { id: 'D005', name: 'Matcha Latte Mix', price: 11.00, description: 'Packet of matcha latte mix.', image: '../Assets/Matcha Latte Mix.png', category: 'drink' },
+    { id: 'D006', name: 'Caramel Drizzle Syrup', price: 7.50, description: 'Small bottle of caramel drizzle syrup.', image: '../Assets/Caramel Drizzle Syrup.png', category: 'drink' },
+    { id: 'D007', name: 'Hojicha Tea Bags', price: 9.00, description: 'Box of Japanese Hojicha tea bags.', image: '../Assets/Japanese Hojicha Tea Bags.png', category: 'drink' },
+    { id: 'D008', name: 'Yuzu Refresher', price: 6.00, description: 'Vibrant yuzu sparkling drink.', image: '../Assets/yuzu_drink.png', category: 'drink' },
+];
+
+// Save products to localStorage if not already
+if (!localStorage.getItem('AllProducts')) {
+    localStorage.setItem('AllProducts', JSON.stringify(products));
+}
+
+// Load products
+const allProducts = JSON.parse(localStorage.getItem('AllProducts'));
+
+// ============================
+// Display Products
+// ============================
+function displayProducts() {
+    const containers = {
+        mochi: document.getElementById("mochi-products"),
+        baked: document.getElementById("baked-products"),
+        drink: document.getElementById("drink-products")
+    };
+
+    if (!containers.mochi || !containers.baked || !containers.drink) return;
+
+    Object.values(containers).forEach(container => container.innerHTML = "");
+
+    allProducts.forEach(product => {
+        const div = document.createElement("div");
+        div.classList.add("product-card");
+        div.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <h3>${product.name}</h3>
+            <p class="product-description">${product.description}</p>
+            <p class="product-price">$${product.price.toFixed(2)}</p>
+            <button class="add-to-cart-button" onclick="addItemToCart('${product.id}', '${product.name}', ${product.price})">Add to Cart</button>
+        `;
+
+        containers[product.category].appendChild(div);
+    });
+}
+
+// Call displayProducts after DOM is loaded
+document.addEventListener('DOMContentLoaded', displayProducts);
 
 /* IA#2: User-Defined Function - updateCartItemCount() */
 /* Purpose: To update the cart item count displayed in the header based on Local Storage data. */
