@@ -1410,3 +1410,233 @@
 .social-icons a:hover {
     color: var(--matcha-accent);
 }
+/* Invoice Styles
+JAMARIE MCGLASHEN
+2408376*/
+
+.invoice-page {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.invoice-page h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--coffee);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+}
+
+.invoice-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+}
+
+/* Invoice Header */
+.invoice-header-info {
+    text-align: center;
+    border-bottom: 2px solid var(--oat-milk);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.invoice-header-info h2 {
+    color: var(--coffee);
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+.invoice-header-info p {
+    color: var(--cinnamon-latte);
+    margin: 5px 0;
+}
+
+/* Invoice Meta Info */
+.invoice-meta {
+    display: flex;
+    justify-content: space-between;
+    background: var(--milk);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.meta-left, .meta-right {
+    flex: 1;
+}
+
+.status-paid {
+    background: var(--matcha-accent);
+    color: var(--milk);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Shipping Details */
+.shipping-details {
+    background: var(--milk);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.shipping-details h3 {
+    color: var(--coffee);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.shipping-details h3 i {
+    color: var(--matcha-accent);
+    margin-right: 10px;
+}
+
+/* Invoice Items Table */
+.invoice-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+}
+
+.invoice-items-table thead {
+    background: var(--oat-milk);
+}
+
+.invoice-items-table th {
+    padding: 12px 15px;
+    text-align: left;
+    color: var(--coffee);
+    font-weight: 600;
+}
+
+.invoice-items-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--milk);
+}
+
+.invoice-items-table tbody tr:hover {
+    background: var(--milk);
+}
+
+/* Invoice Summary */
+.invoice-summary {
+    background: var(--milk);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 25px 0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.summary-row.grand-total {
+    border-top: 2px solid var(--cinnamon-latte);
+    margin-top: 10px;
+    padding-top: 15px;
+    font-size: 1.2rem;
+    color: var(--coffee);
+}
+
+/* Invoice Message */
+.invoice-message {
+    text-align: center;
+    padding: 20px;
+    background: var(--milk);
+    border-radius: 8px;
+    margin-top: 25px;
+}
+
+.invoice-message i {
+    color: var(--mochi-accent);
+    margin-right: 10px;
+}
+
+.thank-you {
+    font-size: 1.1rem;
+    color: var(--coffee);
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* Invoice Actions */
+.invoice-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.print-btn, .home-btn, .dashboard-btn {
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.print-btn {
+    background: var(--matcha-accent);
+    color: var(--coffee);
+    border: none;
+    cursor: pointer;
+}
+
+.home-btn {
+    background: var(--oat-milk);
+    color: var(--coffee);
+}
+
+.dashboard-btn {
+    background: var(--mochi-accent);
+    color: var(--coffee);
+}
+
+.print-btn:hover {
+    background: var(--coffee);
+    color: var(--milk);
+    transform: translateY(-2px);
+}
+
+.home-btn:hover, .dashboard-btn:hover {
+    background: var(--coffee);
+    color: var(--milk);
+    transform: translateY(-2px);
+}
+
+/* Print Styles */
+@media print {
+    .invoice-actions, .main-nav, #main-footer {
+        display: none !important;
+    }
+    
+    .invoice-card {
+        box-shadow: none;
+        padding: 0;
+    }
+    
+    body {
+        font-size: 12pt;
+    }
+}
+
+/* Error Message */
+.error {
+    color: #e74c3c;
+    text-align: center;
+    padding: 20px;
+    background: #ffebee;
+    border-radius: 8px;
+}
