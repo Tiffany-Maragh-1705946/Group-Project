@@ -530,3 +530,250 @@ function handleConfirmOrder(event) {
     localStorage.removeItem('shoppingCart');
     window.location.href = '../index.html'; 
 }
+
+/*GROUP PROJECT: INVOICE SYSTEM ,Purpose: Generate, store, and display invoices
+JAMARIE MCGLASHEN 
+2408376
+
+*/
+
+/* 
+Generates invoice after checkout and stores in localStorage
+*/
+function generateInvoice(shippingInfo) {
+// 1. Get current user TRN and cart
+const currentUser = localStorage.getItem('currentUserTRN'); // store TRN on login
+if (!currentUser) {
+    alert('Error: No user logged in');
+    return null;
+}
+
+const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+if (cart.length === 0) {
+    alert('Error: Cart is empty');
+    return null;
+}
+
+// 2. Calculate totals using existing function
+const totals = updateCartTotal();
+
+// 3. Generate unique invoice number
+const invoiceNumber = 'INV-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+// 4. Create invoice object
+const invoice = {
+    invoiceNumber: invoiceNumber,
+    date: new Date().toLocaleDateString(),
+    time: new Date().toLocaleTimeString(),
+    customerTRN: currentUser,
+    shippingInfo: shippingInfo,
+    items: cart.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: parseFloat(item.price),
+        lineTotal: (item.price * item.quantity).toFixed(2)
+    })),
+    subtotal: totals.subTotal.toFixed(2),
+    discount: totals.discountAmount.toFixed(2),
+    tax: totals.taxAmount.toFixed(2),
+    total: totals.finalTotal.toFixed(2),
+    status: 'Paid'
+};
+
+// 5. STORE INVOICE IN LOCALSTORAGE
+//Store in ALL Invoices 
+let allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+allInvoices.push(invoice);
+localStorage.setItem('AllInvoices', JSON.stringify(allInvoices));
+
+// Store in user's personal invoices
+let users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+const userIndex = users.findIndex(user => user.trn === currentUser);
+
+if (userIndex !== -1) {
+    if (!users[userIndex].invoices) {
+        users[userIndex].invoices = [];
+    }
+    users[userIndex].invoices.push(invoice);
+    localStorage.setItem('RegistrationData', JSON.stringify(users));
+}
+
+// Clear cart after successful invoice
+localStorage.removeItem('shoppingCart');
+updateCartItemCount(); // Update cart counter
+
+//Store for display on invoice page
+localStorage.setItem('lastInvoice', JSON.stringify(invoice));
+
+return invoice;
+}
+
+
+function displayInvoice() {
+const invoiceData = JSON.parse(localStorage.getItem('lastInvoice'));
+const container = document.getElementById('invoice-content');
+
+if (!container) return; 
+if (!invoiceData) {
+    container.innerHTML = '<p class="error">No invoice found.</p>';
+    return;
+}
+
+container.innerHTML = `
+    <div class="invoice-header-info">
+        <h2>Mochi Bakery & Cafe</h2>
+        <p>Sweet Moments. Delivered.</p>
+        <p>Email: info@mochibakerycafe.com | Phone: +1 678 555-MOCHI</p>
+    </div>
+    
+    <div class="invoice-meta">
+        <div class="meta-left">
+            <p><strong>Invoice #:</strong> ${invoiceData.invoiceNumber}</p>
+            <p><strong>Date:</strong> ${invoiceData.date}</p>
+            <p><strong>Time:</strong> ${invoiceData.time}</p>
+        </div>
+        <div class="meta-right">
+            <p><strong>Customer TRN:</strong> ${invoiceData.customerTRN}</p>
+            <p><strong>Status:</strong> <span class="status-paid">${invoiceData.status}</span></p>
+        </div>
+    </div>
+    
+    <div class="shipping-details">
+        <h3><i class="fas fa-shipping-fast"></i> Shipping Information</h3>
+        <p><strong>${invoiceData.shippingInfo.name}</strong></p>
+        <p>${invoiceData.shippingInfo.address}</p>
+        <p>${invoiceData.shippingInfo.city}</p>
+        <p>Phone: ${invoiceData.shippingInfo.phone}</p>
+    </div>
+    
+    <table class="invoice-items-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${invoiceData.items.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>$${item.lineTotal}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+    
+    <div class="invoice-summary">
+        <div class="summary-row">
+            <span>Subtotal:</span>
+            <span>$${invoiceData.subtotal}</span>
+        </div>
+        <div class="summary-row">
+            <span>Discount (10%):</span>
+            <span>-$${invoiceData.discount}</span>
+        </div>
+        <div class="summary-row">
+            <span>Tax (15%):</span>
+            <span>$${invoiceData.tax}</span>
+        </div>
+        <div class="summary-row grand-total">
+            <span><strong>TOTAL:</strong></span>
+            <span><strong>$${invoiceData.total}</strong></span>
+        </div>
+    </div>
+    
+    <div class="invoice-message">
+        <p><i class="fas fa-envelope"></i> Invoice has been sent to your registered email.</p>
+        <p class="thank-you">Thank you for your order!</p>
+    </div>
+`;
+}
+
+/* 
+Shows all invoices in console 
+*/
+function ShowInvoices() {
+const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+
+console.log('=== ALL INVOICES ===');
+console.log(`Total invoices: ${allInvoices.length}`);
+
+allInvoices.forEach(invoice => {
+    console.log('------------------------');
+    console.log(`Invoice #: ${invoice.invoiceNumber}`);
+    console.log(`Date: ${invoice.date}`);
+    console.log(`Customer TRN: ${invoice.customerTRN}`);
+    console.log(`Total: $${invoice.total}`);
+});
+
+return allInvoices;
+}
+
+/* 
+Gets all invoices for specific user 
+*/
+function GetUserInvoices(trn) {
+const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+const user = users.find(u => u.trn === trn);
+
+if (user && user.invoices) {
+    console.log(`=== INVOICES FOR TRN: ${trn} ===`);
+    console.log(`Total invoices: ${user.invoices.length}`);
+    
+    user.invoices.forEach(invoice => {
+        console.log(`- ${invoice.invoiceNumber}: $${invoice.total} (${invoice.date})`);
+    });
+    
+    return user.invoices;
+} else {
+    console.log(`No invoices found for TRN: ${trn}`);
+    return [];
+}
+}
+
+
+// Find existing function and update it
+function handleConfirmOrder(event) {
+event.preventDefault();
+
+// Get shipping info
+const shippingInfo = {
+    name: document.getElementById('shipping-name').value.trim(),
+    address: document.getElementById('shipping-address').value.trim(),
+    city: document.getElementById('shipping-city').value.trim(),
+    phone: document.getElementById('shipping-phone').value.trim()
+};
+
+// Validate
+if (!shippingInfo.name) {
+    alert("Please enter your Full Name for shipping.");
+    return;
+}
+
+// Generate invoice
+const invoice = generateInvoice(shippingInfo);
+
+if (invoice) {
+    // Redirect to invoice page
+    window.location.href = 'invoice.html';
+} else {
+    alert('Error generating invoice. Please try again.');
+}
+}
+
+// Make sure invoice displays when page loads
+document.addEventListener('DOMContentLoaded', function() {
+// Check if we're on invoice page
+if (window.location.pathname.includes('invoice.html')) {
+    displayInvoice();
+}
+});
+
+//  print function
+function printInvoice() {
+window.print();
+}
