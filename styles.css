@@ -1640,3 +1640,10 @@ JAMARIE MCGLASHEN
     background: #ffebee;
     border-radius: 8px;
 }
+/* Dhi-Andra Neath*/
+.product-description {
+    font-size: 0.9rem;     
+    color: #555;            
+    margin: 5px 0 10px 0;   
+    line-height: 1.4;       
+}
