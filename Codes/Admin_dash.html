@@ -1,1 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Mochi Bakery</title>
+    
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+<body>
+    <header id="main-header">
+        <div class="logo">
+            <a href="../index.html"><img src="../Assets/1.png" alt="mochi bakery logo" width="100"></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="admin_dashboard.html">Dashboard</a></li>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+            </ul>
+        </nav>
+        
+        <div class="admin-info">
+            <span><i class="fas fa-crown"></i> Administrator</span>
+           <button onclick="logoutAdmin()" class="logout-btn">Logout</button>
+        </div>
+    </header>
 
+    <main class="simple-admin-dash">
+        <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+        
+        <div class="admin-welcome">
+            <p>Welcome, Administrator! Use the buttons below to analyze user data and invoices.</p>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="stats-container">
+            <div class="stat-box">
+                <i class="fas fa-users"></i>
+                <h3>Total Users</h3>
+                <p id="stat-users">0</p>
+            </div>
+            
+            <div class="stat-box">
+                <i class="fas fa-receipt"></i>
+                <h3>Total Invoices</h3>
+                <p id="stat-invoices">0</p>
+            </div>
+            
+            <div class="stat-box">
+                <i class="fas fa-chart-line"></i>
+                <h3>Revenue</h3>
+                <p id="stat-revenue">$0.00</p>
+            </div>
+        </div>
+        
+        <!-- Main Controls -->
+        <div class="admin-controls">
+            <div class="control-card">
+                <h2><i class="fas fa-chart-bar"></i> User Frequency Analysis</h2>
+                <p>Show gender and age group distribution of registered users</p>
+                <button onclick="runFrequencyAnalysis()" class="cta-button">
+                    <i class="fas fa-chart-pie"></i> Show User Frequency
+                </button>
+                <p class="note">Results will appear in browser console (F12)</p>
+            </div>
+            
+            <div class="control-card">
+                <h2><i class="fas fa-file-invoice"></i> Invoice Management</h2>
+                <p>View and search through all system invoices</p>
+                <button onclick="showAllInvoices()" class="cta-button">
+                    <i class="fas fa-list"></i> Show All Invoices
+                </button>
+                <button onclick="searchUserInvoices()" class="secondary-button">
+                    <i class="fas fa-search"></i> Search by TRN
+                </button>
+            </div>
+        </div>
+        
+        <!-- Quick Results Display -->
+        <div class="results-panel">
+            <h2><i class="fas fa-info-circle"></i> Results Panel</h2>
+            <div id="results-display">
+                <p>Click the buttons above to see results here and in the console.</p>
+            </div>
+        </div>
+        
+        <!-- Console Instructions -->
+        <div class="console-panel">
+            <h2><i class="fas fa-terminal"></i> Console Commands (F12 → Console)</h2>
+            <div class="commands-list">
+                <div class="command">
+                    <code>ShowUserFrequency()</code>
+                    <span>Show gender/age group analysis</span>
+                </div>
+                <div class="command">
+                    <code>ShowInvoices()</code>
+                    <span>Display all invoices</span>
+                </div>
+                <div class="command">
+                    <code>GetUserInvoices('123-456-789')</code>
+                    <span>Get invoices for specific TRN</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer id="main-footer">
+        <div class="footer-content-wrapper">
+            <div class="footer-brand-logo">
+                <img src="../Assets/3.png" alt="Mochi bakery logo" class="footer-logo">
+                <p>&copy; <span id="current-year">2025</span> Mochi Bakery & Cafe</p>
+            </div>
+            <div class="footer-nav-links">
+                <h3>Admin Links</h3>
+                <ul>
+                    <li><a href="admin_dashboard.html">Dashboard</a></li>
+                    <li><a href="../index.html">Store Front</a></li>
+                    <li><a href="login.html">Switch User</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    
+    <script>
+        // ============================================
+        // ADMIN DASHBOARD JAVASCRIPT
+        // ============================================
+        
+        // Check if user is admin on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const adminTRN = localStorage.getItem('currentUserTRN');
+            
+            console.log('Admin check:', { isAdmin, adminTRN });
+            
+            if (!isAdmin || adminTRN !== '999-999-999') {
+                alert('❌ Access Denied: Admin privileges required.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load initial statistics
+            loadStatistics();
+            
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            console.log('✅ Admin dashboard loaded successfully');
+        });
+        
+        // Load basic statistics
+        function loadStatistics() {
+            // Total Users
+            const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+            document.getElementById('stat-users').textContent = users.length;
+            
+            // Total Invoices
+            const invoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+            document.getElementById('stat-invoices').textContent = invoices.length;
+            
+            // Total Revenue
+            let totalRevenue = 0;
+            invoices.forEach(invoice => {
+                totalRevenue += parseFloat(invoice.total) || 0;
+            });
+            document.getElementById('stat-revenue').textContent = `$${totalRevenue.toFixed(2)}`;
+            
+            // Update results display
+            updateResults(`Loaded ${users.length} users and ${invoices.length} invoices.`);
+        }
+        
+        // Run frequency analysis
+        function runFrequencyAnalysis() {
+            console.log('Running user frequency analysis...');
+            
+            // Call the function from script.js
+            const results = ShowUserFrequency();
+            
+            // Update results display
+            if (results) {
+                let displayText = `
+                    <h3>User Frequency Analysis Complete</h3>
+                    <p>✅ Check browser console for detailed results (F12 → Console)</p>
+                    <div class="frequency-summary">
+                        <h4>Summary:</h4>
+                        <p><strong>Gender Distribution:</strong></p>
+                        <p>• Male: ${results.genderCount?.Male || 0}</p>
+                        <p>• Female: ${results.genderCount?.Female || 0}</p>
+                        <p>• Other: ${results.genderCount?.Other || 0}</p>
+                        <p><strong>Age Groups:</strong></p>
+                        <p>• 18-25: ${results.ageGroups?.['18-25'] || 0}</p>
+                        <p>• 26-35: ${results.ageGroups?.['26-35'] || 0}</p>
+                        <p>• 36-50: ${results.ageGroups?.['36-50'] || 0}</p>
+                        <p>• 50+: ${results.ageGroups?.['50+'] || 0}</p>
+                    </div>
+                `;
+                updateResults(displayText);
+            } else {
+                updateResults('❌ No user data found. Please register some users first.');
+            }
+        }
+        
+        // Show all invoices
+        function showAllInvoices() {
+            console.log('Showing all invoices...');
+            const result = ShowInvoices();
+            
+            if (result.count > 0) {
+                updateResults(`
+                    <div class="search-results">
+                        <h3>📄 All System Invoices (${result.count})</h3>
+                        <p>${result.message}</p>
+                        <p class="note">Check browser console for detailed view (F12 → Console)</p>
+                        <div class="invoices-list">
+                            ${result.formatted}
+                        </div>
+                    </div>
+                `);
+            } else {
+                updateResults('❌ No invoices found in the system.');
+            }
+        }
+        
+        // Search user invoices
+        function searchUserInvoices() {
+            const trn = prompt('Enter user TRN to search invoices (format: 000-000-000):');
+            if (trn) {
+                console.log(`Searching invoices for TRN: ${trn}`);
+                const invoices = GetUserInvoices(trn);
+                
+                if (invoices && invoices.length > 0) {
+                    let formattedInvoices = '<h3>📄 User Invoices</h3>';
+                    invoices.forEach(invoice => {
+                        formattedInvoices += `
+                            <div class="invoice-item-display">
+                                <p><strong>Invoice #:</strong> ${invoice.invoiceNumber || 'N/A'}</p>
+                                <p><strong>Date:</strong> ${invoice.date || 'N/A'} ${invoice.time || ''}</p>
+                                <p><strong>Total:</strong> $${invoice.total || '0.00'}</p>
+                                <p><strong>Status:</strong> ${invoice.status || 'Paid'}</p>
+                                <hr>
+                            </div>
+                        `;
+                    });
+                    
+                    updateResults(`
+                        <div class="search-results">
+                            <p>✅ Found ${invoices.length} invoice(s) for TRN: ${trn}</p>
+                            <p class="note">Check browser console for detailed view (F12 → Console)</p>
+                            <div class="invoices-list">
+                                ${formattedInvoices}
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    updateResults(`❌ No invoices found for TRN: ${trn}`);
+                }
+            }
+        }
+        
+        function updateResults(message) {
+            const resultsDiv = document.getElementById('results-display');
+            if (resultsDiv) {
+                resultsDiv.innerHTML = message;
+            }
+        }
+        function logoutAdmin() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUserTRN');
+            localStorage.removeItem('isAdmin');
+            alert('Admin logged out successfully.');
+            window.location.href = 'login.html';
+        }
+        
+        console.log('Admin dashboard initialized');
+        console.log('Available functions:', {
+            ShowUserFrequency: typeof ShowUserFrequency,
+            ShowInvoices: typeof ShowInvoices,
+            GetUserInvoices: typeof GetUserInvoices
+        });
