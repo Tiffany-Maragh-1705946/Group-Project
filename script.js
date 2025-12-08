@@ -2,25 +2,26 @@
 /* Purpose: To open and close the mobile navigation menu on click. */
 /* Creator: Tiffany Maragh 1705946 */
 
-const menuToggleButton = document.getElementById('mobile-menu-toggle'); 
-const mobileMenu = document.getElementById('mobile-nav-menu'); 
+const menuToggleButton = document.getElementById('mobile-menu-toggle');
+const mobileMenu = document.getElementById('mobile-nav-menu');
 
 function toggleMobileMenu() {
-    mobileMenu.classList.toggle('active');
-    
+    if (!menuToggleButton || !mobileMenu) return;
+
+    // Toggle visual state
+    const opening = !mobileMenu.classList.contains('active');
+    mobileMenu.classList.toggle('active', opening);
+
+    // Update icon and aria label
     const icon = menuToggleButton.querySelector('i');
-    if (mobileMenu.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-xmark');
-        menuToggleButton.setAttribute('aria-label', 'Close Menu');
-    } else {
-        icon.classList.remove('fa-xmark');
-        icon.classList.add('fa-bars');
-        menuToggleButton.setAttribute('aria-label', 'Open Menu');
+    if (icon) {
+        icon.classList.toggle('fa-bars', !opening);
+        icon.classList.toggle('fa-xmark', opening);
     }
+    menuToggleButton.setAttribute('aria-label', opening ? 'Close Menu' : 'Open Menu');
 }
 
-if (menuToggleButton) { 
+if (menuToggleButton) {
     menuToggleButton.addEventListener('click', toggleMobileMenu);
 }
 
@@ -40,14 +41,14 @@ function handleLogin(event) {
     // ============================================
     if (trnInput === '999-999-999' && passwordInput === 'Admin123!') {
         console.log("DEBUG: Admin login successful");
-        
+
         localStorage.setItem('currentUser', 'Administrator');
         localStorage.setItem('currentUserTRN', '999-999-999');
         localStorage.setItem('isAdmin', 'true');
-        
+
         updateHeaderWelcomeMessage();
         alert('Admin Login Successful! Welcome Administrator');
-        
+
         // SIMPLE: Always use relative path
         // Since login.html is in Codes/, admin_dashboard.html should be in same folder
         window.location.href = 'Admin_dash.html';
@@ -63,13 +64,14 @@ function handleLogin(event) {
         localStorage.setItem('currentUser', `${user.firstName} ${user.lastName}`);
         localStorage.setItem('currentUserTRN', user.trn);
         localStorage.setItem('isAdmin', 'false');
-        
+
         updateHeaderWelcomeMessage();
         alert('Login Successful! Welcome ' + user.firstName);
         window.location.href = '../index.html';
     } else {
         alert('Login Failed: Incorrect TRN or password.');
-        document.getElementById('login-password').value = '';
+        const pwdEl = document.getElementById('login-password');
+        if (pwdEl) pwdEl.value = '';
     }
 }
 
@@ -86,22 +88,16 @@ function updateHeaderWelcomeMessage(username = null) {
     if (username && welcomeHeader) {
         welcomeHeader.textContent = `Welcome Back, ${username}!`;
         welcomeHeader.style.display = 'inline-block';
-        
-        if (userAuthDiv) {
-            userAuthDiv.style.display = 'none';
-        }
-        
+
+        if (userAuthDiv) userAuthDiv.style.display = 'none';
+
         // Add logout button
         addLogoutButton();
     } else {
         // User not logged in
-        if (welcomeHeader) {
-            welcomeHeader.style.display = 'none';
-        }
-        if (userAuthDiv) {
-            userAuthDiv.style.display = 'flex';
-        }
-        
+        if (welcomeHeader) welcomeHeader.style.display = 'none';
+        if (userAuthDiv) userAuthDiv.style.display = 'flex';
+
         // Remove logout button
         removeLogoutButton();
     }
@@ -121,17 +117,17 @@ if (loginForm) {
 /* Purpose: Stores a new user's complete registration data in local storage. */
 /* Modified by: Jamarie McGlashen (2408376) - Added RegistrationData for invoices */
 /* Creator: Tiffany Maragh 1705946 */
-function saveRegistrationData(userData){
+function saveRegistrationData(userData) {
     // Save to registeredUsers
-    let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
     registeredUsers.push(userData);
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-    
+
     // ============================================
     // ADDED FOR INVOICE SYSTEM: Save to RegistrationData
     // ============================================
-    let registrationData = JSON.parse(localStorage.getItem('RegistrationData')) || [];
-    
+    const registrationData = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+
     const invoiceUser = {
         trn: userData.trn,
         password: userData.password,
@@ -143,13 +139,13 @@ function saveRegistrationData(userData){
         email: userData.email,
         dateRegistered: new Date().toLocaleDateString(),
         cart: [],
-        invoices: []  // Empty array for future invoices
+        invoices: [] // Empty array for future invoices
     };
-    
+
     registrationData.push(invoiceUser);
     localStorage.setItem('RegistrationData', JSON.stringify(registrationData));
     // ============================================
-    
+
     console.log("User registered:", userData.email, "Total registered users:", registeredUsers.length);
 }
 
@@ -163,9 +159,9 @@ function validateForm() {
         const span = document.getElementById(id);
         if (span) span.textContent = '';
     };
-    
-    ['first-name-error', 'last-name-error', 'username-error', 'email-error', 'password-error', 
-     'confirm-password-error', 'trn-error', 'phone-error', 'dob-error', 'gender-error'].forEach(clearError);
+
+    ['first-name-error', 'last-name-error', 'username-error', 'email-error', 'password-error',
+        'confirm-password-error', 'trn-error', 'phone-error', 'dob-error', 'gender-error'].forEach(clearError);
 
     const firstName = getField('reg-first-name').value.trim();
     const lastName = getField('reg-last-name').value.trim();
@@ -176,14 +172,14 @@ function validateForm() {
     const trn = getField('reg-trn').value.trim();
     const phone = getField('reg-phone').value.trim();
     const dob = getField('reg-dob').value;
-    const gender = getField('reg-gender').value;   
+    const gender = getField('reg-gender').value;
 
     // Validation checks (same as original)
-    if (firstName === '') { 
+    if (firstName === '') {
         getField('first-name-error').textContent = 'First Name is required.';
         isValid = false;
     }
-    if (lastName === '') { 
+    if (lastName === '') {
         getField('last-name-error').textContent = 'Last Name is required.';
         isValid = false;
     }
@@ -194,7 +190,7 @@ function validateForm() {
         getField('username-error').textContent = 'Username must be at least 5 characters.';
         isValid = false;
     }
-    
+
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email === '') {
         getField('email-error').textContent = 'Email is required.';
@@ -203,7 +199,7 @@ function validateForm() {
         getField('email-error').textContent = 'Invalid email format.';
         isValid = false;
     }
-    
+
     if (password === '') {
         getField('password-error').textContent = 'Password is required.';
         isValid = false;
@@ -211,13 +207,13 @@ function validateForm() {
         getField('password-error').textContent = 'Password must be at least 8 characters.';
         isValid = false;
     }
-    
+
     const passwordComplexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordComplexityRegex.test(password)) {
         getField('password-error').textContent = "Password needs 1 uppercase, 1 lowercase, 1 number, 1 special character.";
         isValid = false;
     }
-    
+
     if (password === '') {
         getField('confirm-password-error').textContent = 'Please confirm your password.';
         isValid = false;
@@ -225,7 +221,7 @@ function validateForm() {
         getField('confirm-password-error').textContent = 'Passwords do not match.';
         isValid = false;
     }
-    
+
     const regexTRN = /^\d{3}-\d{3}-\d{3}$/;
     if (trn === '') {
         getField('trn-error').textContent = 'TRN is required.';
@@ -240,7 +236,7 @@ function validateForm() {
             isValid = false;
         }
     }
-    
+
     const regexPhone = /^(876)-\d{3}-\d{4}$/;
     if (phone === '') {
         getField('phone-error').textContent = 'Phone Number is required.';
@@ -249,11 +245,11 @@ function validateForm() {
         getField('phone-error').textContent = 'Phone Number must be in format 876-XXX-XXXX.';
         isValid = false;
     }
-    
+
     if (dob === '') {
         getField('dob-error').textContent = 'Date of Birth is required.';
         isValid = false;
-    } else {    
+    } else {
         const birthDate = new Date(dob);
         const today = new Date();
         let age = today.getFullYear() - birthDate.getFullYear();
@@ -266,12 +262,12 @@ function validateForm() {
             isValid = false;
         }
     }
-    
-    if (gender === '') {            
+
+    if (gender === '') {
         getField('gender-error').textContent = 'Please select a gender.';
         isValid = false;
     }
-    
+
     if (isValid) {
         const userData = {
             firstName: firstName,
@@ -294,10 +290,10 @@ function validateForm() {
 }
 
 /* IA#2 Group Project: Event Handling - handleCancelRegistration() */
-function handleCancelRegistration() {   
+function handleCancelRegistration() {
     const confirmation = confirm("Are you sure you want to cancel your registration? All entered data will be lost.");
     if (confirmation) {
-        window.location.href = '../index.html'; 
+        window.location.href = '../index.html';
     }
 }
 
@@ -315,14 +311,14 @@ const openCartButtons = document.querySelectorAll('.cart-link');
 const closeCartButton = document.getElementById('close-cart-button');
 
 function openCartSidebar(event) {
-    if (event) {
-        event.preventDefault(); 
-    }
+    if (event) event.preventDefault();
+    if (!cartSidebar) return;
     cartSidebar.classList.add('open');
-    renderCartItems(); 
+    renderCartItems();
 }
 
 function closeCartSidebar() {
+    if (!cartSidebar) return;
     cartSidebar.classList.remove('open');
 }
 
@@ -357,7 +353,7 @@ if (!localStorage.getItem('AllProducts')) {
     localStorage.setItem('AllProducts', JSON.stringify(products));
 }
 
-const allProducts = JSON.parse(localStorage.getItem('AllProducts'));
+const allProducts = JSON.parse(localStorage.getItem('AllProducts')) || [];
 
 function displayProducts() {
     const containers = {
@@ -380,7 +376,8 @@ function displayProducts() {
             <p class="product-price">$${product.price.toFixed(2)}</p>
             <button class="add-to-cart-button" onclick="addItemToCart('${product.id}', '${product.name}', ${product.price})">Add to Cart</button>
         `;
-        containers[product.category].appendChild(div);
+        const target = containers[product.category];
+        if (target) target.appendChild(div);
     });
 }
 
@@ -389,9 +386,9 @@ document.addEventListener('DOMContentLoaded', displayProducts);
 /* IA#2: User-Defined Function - updateCartItemCount() */
 /* Creator: Tiffany Maragh 1705946 */
 function updateCartItemCount() {
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+
     const countSpans = document.querySelectorAll('#cart-item-count, #cart-item-count-mobile');
     countSpans.forEach(span => {
         span.textContent = totalCount;
@@ -404,12 +401,11 @@ document.addEventListener('DOMContentLoaded', updateCartItemCount);
 /* IA#2: User-Defined Function - addItemToCart() */
 /* Creator: Tiffany Maragh 1705946 */
 function addItemToCart(productId, productName, price, quantity = 1) {
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    
-    let itemFound = cart.find(item => item.id === productId);
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
-    if (itemFound) {
-        itemFound.quantity += quantity;
+    const idx = cart.findIndex(item => item.id === productId);
+    if (idx !== -1) {
+        cart[idx].quantity = (cart[idx].quantity || 0) + quantity;
     } else {
         cart.push({
             id: productId,
@@ -421,8 +417,8 @@ function addItemToCart(productId, productName, price, quantity = 1) {
 
     localStorage.setItem('shoppingCart', JSON.stringify(cart));
     updateCartItemCount();
-    renderCartItems(); 
-    openCartSidebar(); 
+    renderCartItems();
+    openCartSidebar();
 }
 
 /* IA#2: User-Defined Function - renderCartItems() */
@@ -432,7 +428,9 @@ function renderCartItems() {
     const itemListDiv = document.getElementById('cart-items-list');
     const emptyMessage = document.getElementById('cart-empty-message');
 
-    itemListDiv.innerHTML = ''; 
+    if (!itemListDiv || !emptyMessage) return;
+
+    itemListDiv.innerHTML = '';
 
     if (cart.length === 0) {
         emptyMessage.style.display = 'block';
@@ -445,6 +443,7 @@ function renderCartItems() {
     cart.forEach(item => {
         const itemDiv = document.createElement('div');
         itemDiv.classList.add('cart-item');
+
         itemDiv.innerHTML = `
             <p class="item-name">${item.name}</p>
             <div class="item-controls">
@@ -457,9 +456,9 @@ function renderCartItems() {
         `;
         itemListDiv.appendChild(itemDiv);
     });
-    
+
     updateCartTotal();
-    attachCartItemListeners(); 
+    attachCartItemListeners();
 }
 
 /* IA#2: User-Defined Function - updateCartTotal() */
@@ -467,78 +466,108 @@ function renderCartItems() {
 function updateCartTotal() {
     const TAX_RATE = 0.15;
     const DISCOUNT_PERCENT = 0.10;
-    
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let subTotal = 0;
 
     cart.forEach(item => {
-        subTotal += item.price * item.quantity; 
+        subTotal += (item.price * item.quantity) || 0;
     });
 
     const discountAmount = subTotal * DISCOUNT_PERCENT;
     const totalBeforeTax = subTotal - discountAmount;
     const taxAmount = totalBeforeTax * TAX_RATE;
     const finalTotal = totalBeforeTax + taxAmount;
-    
+
     const format = (num) => num.toFixed(2);
 
     const subtotalEl = document.getElementById('cart-subtotal');
     const discountEl = document.getElementById('cart-discount');
     const taxEl = document.getElementById('cart-tax');
     const totalEl = document.getElementById('cart-total');
-    
+
     if (subtotalEl) {
         subtotalEl.textContent = `$${format(subTotal)}`;
-        discountEl.textContent = `-$${format(discountAmount)}`;
-        taxEl.textContent = `$${format(taxAmount)}`;
-        totalEl.textContent = `$${format(finalTotal)}`;
+        if (discountEl) discountEl.textContent = `-$${format(discountAmount)}`;
+        if (taxEl) taxEl.textContent = `$${format(taxAmount)}`;
+        if (totalEl) totalEl.textContent = `$${format(finalTotal)}`;
     }
-    
-    return { 
-        subTotal: subTotal, 
+
+    return {
+        subTotal: subTotal,
         discountAmount: discountAmount,
         taxAmount: taxAmount,
-        finalTotal: finalTotal 
+        finalTotal: finalTotal
     };
 }
 
 /* IA#2: Event Handling - Item Controls (Remove/Quantity) */
 /* Creator: Tiffany Maragh 1705946 */
 function attachCartItemListeners() {
-    const removeButtons = document.querySelectorAll('.remove-btn');
-    const increaseButtons = document.querySelectorAll('.quantity-btn.increase');
-    const decreaseButtons = document.querySelectorAll('.quantity-btn.decrease');
-    
+    const removeButtons = Array.from(document.querySelectorAll('.remove-btn'));
+    const increaseButtons = Array.from(document.querySelectorAll('.quantity-btn.increase'));
+    const decreaseButtons = Array.from(document.querySelectorAll('.quantity-btn.decrease'));
+
     removeButtons.forEach(button => {
+        button.removeEventListener('click', handleRemoveItem);
         button.addEventListener('click', handleRemoveItem);
     });
-    
+
     increaseButtons.forEach(button => {
+        button.removeEventListener('click', handleQuantityChange);
         button.addEventListener('click', handleQuantityChange);
     });
+
     decreaseButtons.forEach(button => {
+        button.removeEventListener('click', handleQuantityChange);
         button.addEventListener('click', handleQuantityChange);
     });
-    
+
     const clearButton = document.getElementById('clear-cart-button');
     if (clearButton) {
+        clearButton.removeEventListener('click', handleClearCart);
         clearButton.addEventListener('click', handleClearCart);
     }
+
+    // Also attach change listeners to numeric inputs (in case user edits quantity)
+    const quantityInputs = Array.from(document.querySelectorAll('.item-quantity'));
+    quantityInputs.forEach(input => {
+        input.removeEventListener('change', handleQuantityInputChange);
+        input.addEventListener('change', handleQuantityInputChange);
+    });
 }
 
 function handleQuantityChange(event) {
     const productId = event.target.dataset.id;
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    let item = cart.find(i => i.id === productId);
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const item = cart.find(i => i.id === productId);
 
-    if (item) {
-        if (event.target.classList.contains('increase')) {
-            item.quantity++;
-        } else if (event.target.classList.contains('decrease') && item.quantity > 1) {
-            item.quantity--;
-        }
+    if (!item) return;
+
+    if (event.target.classList.contains('increase')) {
+        item.quantity = (item.quantity || 0) + 1;
+    } else if (event.target.classList.contains('decrease') && item.quantity > 1) {
+        item.quantity = item.quantity - 1;
     }
-    
+
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    renderCartItems();
+}
+
+function handleQuantityInputChange(event) {
+    const productId = event.target.dataset.id;
+    const newVal = parseInt(event.target.value, 10);
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const item = cart.find(i => i.id === productId);
+
+    if (!item) return;
+
+    if (isNaN(newVal) || newVal < 1) {
+        event.target.value = item.quantity;
+        return;
+    }
+
+    item.quantity = newVal;
     localStorage.setItem('shoppingCart', JSON.stringify(cart));
     renderCartItems();
 }
@@ -546,7 +575,7 @@ function handleQuantityChange(event) {
 function handleRemoveItem(event) {
     const productId = event.target.dataset.id;
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    cart = cart.filter(item => item.id !== productId); 
+    cart = cart.filter(item => item.id !== productId);
     localStorage.setItem('shoppingCart', JSON.stringify(cart));
     renderCartItems();
 }
@@ -554,7 +583,7 @@ function handleRemoveItem(event) {
 function handleClearCart() {
     localStorage.removeItem('shoppingCart');
     updateCartItemCount();
-    renderCartItems(); 
+    renderCartItems();
     closeCartSidebar();
     alert('Your cart has been cleared!');
 }
@@ -564,11 +593,13 @@ function handleClearCart() {
 function displayCheckoutSummary() {
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     updateCartTotal();
-    
+
     const checkoutItemList = document.getElementById('checkout-item-list');
     const amountPaidInput = document.getElementById('amount-paid');
-    
-    checkoutItemList.innerHTML = ''; 
+
+    if (!checkoutItemList) return;
+
+    checkoutItemList.innerHTML = '';
 
     if (cart.length === 0) {
         checkoutItemList.innerHTML = '<p class="text-center">Your cart is empty. Please return to the products page.</p>';
@@ -585,7 +616,7 @@ function displayCheckoutSummary() {
         `;
         checkoutItemList.appendChild(itemDiv);
     });
-    
+
     const totals = updateCartTotal();
     if (amountPaidInput && totals && totals.finalTotal) {
         amountPaidInput.value = `$${totals.finalTotal.toFixed(2)}`;
@@ -595,15 +626,15 @@ function displayCheckoutSummary() {
 /* IA#2: Checkout Page Event Listeners */
 document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.checkout-page-container')) {
-        displayCheckoutSummary(); 
+        displayCheckoutSummary();
         attachCartItemListeners();
     }
-    
+
     const cancelButton = document.getElementById('cancel-button');
     if (cancelButton) {
         cancelButton.addEventListener('click', handleCancelOrder);
     }
-    
+
     const confirmForm = document.getElementById('shipping-form');
     if (confirmForm) {
         confirmForm.addEventListener('submit', handleConfirmOrder);
@@ -615,7 +646,7 @@ function handleCancelOrder() {
     if (confirmation) {
         localStorage.removeItem('shoppingCart');
         alert("Order canceled. Cart cleared.");
-        window.location.href = '../Codes/products.html'; 
+        window.location.href = '../Codes/products.html';
     }
 }
 
@@ -659,18 +690,16 @@ function generateInvoice(shippingInfo) {
     };
 
     // Store in AllInvoices
-    let allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+    const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
     allInvoices.push(invoice);
     localStorage.setItem('AllInvoices', JSON.stringify(allInvoices));
 
     // Store in user's personal invoices
-    let users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+    const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
     const userIndex = users.findIndex(user => user.trn === currentUser);
 
     if (userIndex !== -1) {
-        if (!users[userIndex].invoices) {
-            users[userIndex].invoices = [];
-        }
+        if (!users[userIndex].invoices) users[userIndex].invoices = [];
         users[userIndex].invoices.push(invoice);
         localStorage.setItem('RegistrationData', JSON.stringify(users));
     }
@@ -686,7 +715,7 @@ function displayInvoice() {
     const invoiceData = JSON.parse(localStorage.getItem('lastInvoice'));
     const container = document.getElementById('invoice-content');
 
-    if (!container) return; 
+    if (!container) return;
     if (!invoiceData) {
         container.innerHTML = '<p class="error">No invoice found.</p>';
         return;
@@ -784,7 +813,7 @@ function ShowInvoices() {
     });
 
     // Create a formatted display for the admin dashboard /Jamrie Mcglashen
-    
+
     let formattedInvoices = '';
     allInvoices.forEach(invoice => {
         formattedInvoices += `
@@ -832,7 +861,7 @@ function handleConfirmOrder(event) {
 }
 
 // Make sure invoice displays when page loads
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     if (window.location.pathname.includes('invoice.html')) {
         displayInvoice();
     }
@@ -841,15 +870,16 @@ document.addEventListener('DOMContentLoaded', function() {
 function printInvoice() {
     window.print();
 }
+
 function ShowUserFrequency() {
     const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
-    
+
     console.log('=== USER FREQUENCY ANALYSIS ===');
     console.log(`Total registered users: ${users.length}`);
-    
+
     // 1. Gender Frequency
     const genderCount = { Male: 0, Female: 0, Other: 0 };
-    
+
     users.forEach(user => {
         if (genderCount.hasOwnProperty(user.gender)) {
             genderCount[user.gender]++;
@@ -857,12 +887,12 @@ function ShowUserFrequency() {
             genderCount.Other++;
         }
     });
-    
+
     console.log('\n--- GENDER DISTRIBUTION ---');
     console.log(`Male: ${genderCount.Male} users`);
     console.log(`Female: ${genderCount.Female} users`);
     console.log(`Other: ${genderCount.Other} users`);
-    
+
     // 2. Age Group Frequency
     const ageGroups = {
         '18-25': 0,
@@ -870,18 +900,18 @@ function ShowUserFrequency() {
         '36-50': 0,
         '50+': 0
     };
-    
+
     users.forEach(user => {
         if (user.dob) {
             const birthDate = new Date(user.dob);
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
-            
+
             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
                 age--;
             }
-            
+
             if (age >= 18 && age <= 25) {
                 ageGroups['18-25']++;
             } else if (age >= 26 && age <= 35) {
@@ -893,70 +923,70 @@ function ShowUserFrequency() {
             }
         }
     });
-    
+
     console.log('\n--- AGE GROUP DISTRIBUTION ---');
     console.log(`18-25: ${ageGroups['18-25']} users`);
     console.log(`26-35: ${ageGroups['26-35']} users`);
     console.log(`36-50: ${ageGroups['36-50']} users`);
     console.log(`50+: ${ageGroups['50+']} users`);
-    
+}
+
 function logout() {
     // Clear all user session data
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentUserTRN');
     localStorage.removeItem('isAdmin');
     localStorage.removeItem('lastInvoice');
-    
+
     alert('You have been logged out successfully.');
-    
+
     const currentPage = window.location.pathname;
-    
+
     if (currentPage.includes('admin_dashboard.html')) {
         // From admin dashboard, go to login page
         window.location.href = 'login.html';
     } else if (currentPage.includes('Codes/')) {
         window.location.href = '../index.html';
     } else {
-
         window.location.href = 'index.html';
     }
 }
 
-/* 
+/*
    AUTO-HIDE LOGIN BUTTON WHEN LOGGED IN // Jaamarie Mcglashen
-   */
+*/
 function checkLoginStatus() {
     const currentUser = localStorage.getItem('currentUser');
     const welcomeHeader = document.getElementById('welcome-message-header');
     const userAuthDiv = document.querySelector('.user-auth');
     const loginButtons = document.querySelectorAll('a[href*="login.html"] button');
-    
+
     if (currentUser && welcomeHeader) {
         // User is logged in
         welcomeHeader.textContent = `Welcome Back, ${currentUser}!`;
         welcomeHeader.style.display = 'inline-block';
-        
+
         // Hide login button if it exists
         if (userAuthDiv) {
             userAuthDiv.style.display = 'none';
         }
-        
+
         // Hide all login buttons in navigation
         loginButtons.forEach(button => {
             button.style.display = 'none';
         });
-        
+
         // Add logout button dynamically if not already there
         addLogoutButton();
     } else {
-     
+
         if (welcomeHeader) {
             welcomeHeader.style.display = 'none';
         }
         if (userAuthDiv) {
             userAuthDiv.style.display = 'flex';
         }
-        
+
         // Remove logout button if exists
         removeLogoutButton();
     }
@@ -965,7 +995,7 @@ function checkLoginStatus() {
 function addLogoutButton() {
     // Check if logout button already exists
     if (document.getElementById('logout-button')) return;
-    
+
     const userInfoDiv = document.querySelector('.user-info-display');
     if (userInfoDiv) {
         const logoutBtn = document.createElement('button');
@@ -973,8 +1003,8 @@ function addLogoutButton() {
         logoutBtn.className = 'logout-btn';
         logoutBtn.textContent = 'Logout';
         logoutBtn.onclick = logout;
+
         
-        // Add some spacing and append
         userInfoDiv.appendChild(document.createElement('br'));
         userInfoDiv.appendChild(logoutBtn);
     }
@@ -988,8 +1018,7 @@ function removeLogoutButton() {
 }
 
 // Update DOMContentLoaded to check login status
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     checkLoginStatus();
     updateHeaderWelcomeMessage();
 });
-}
