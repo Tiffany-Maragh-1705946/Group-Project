@@ -990,6 +990,6 @@ function removeLogoutButton() {
 // Update DOMContentLoaded to check login status
 document.addEventListener('DOMContentLoaded', function() {
     checkLoginStatus();
-    updateHeaderWelcomeMessage(); // Keep your existing function call
+    updateHeaderWelcomeMessage();
 });
 }
