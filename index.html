@@ -1,216 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mochi Cafe and Bakery</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=playfair+display">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=dm+sans">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mochi Cafe and Bakery</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=playfair+display">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=dm+sans">
 </head>
 <body>
-    <header id="main-header">
-        <div class="logo">
-            <img src="/Assets/1.png" alt="mochi bakery and cafe white logo" width="100" height="auto">
+<header id="main-header">
+<div class="logo">
+    <a href="index.html"><img src="Assets/1.png" alt="mochi bakery and cafe white logo" width="100" height="auto"></a>
+</div>
+<nav class="main-nav">
+    <ul>
+        <li class="dropdown">
+            <a href="Codes/products.html">Products</a>
+            <ul class="dropdown-menu"> 
+                <li><a href="Codes/product.html#mochi_desserts">Specialty Mochi & Desserts</a></li>
+                <li><a href="Codes/products.html#baked_goods">Baked Goods</a></li>
+                <li><a href="Codes/products.html#drinks">Signature Coffee & Drinks</a> </li>
+            </ul>
+        </li>
+        <li><a href="Codes/about_us.html">About Us</a></li>
+        <li><a href="Codes/contact_us.html">Contact Us</a></li>
+    </ul>
+</nav>
+<div class="user-info-display">
+    <span id="welcome-message-header"></span> 
+</div>
+
+<div class="user-auth">
+    <a href="Codes/login.html"><button>LOGIN / REGISTER</button></a>
+    <a href="Codes/cart.html" class="cart-link">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span id="cart-item-count">0</span>
+    </a>
+</div>
+
+<div class="mobile-controls">
+    <a href="Codes/cart.html" class="cart-link mobile-cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cart-item-count-mobile">0</span>
+    </a>
+    <button id="mobile-menu-toggle" aria-label="Open Menu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+</div>
+<!-------------------MOBILE VIEW-------------------->
+<nav id="mobile-nav-menu">
+    <ul>
+        <li class="dropdown"><a href="Codes/products.html"> Products </a> 
+            <ul class="dropdown-menu">
+                <li><a href="Codes/product.html#mochi_desserts">Specialty Mochi & Desserts</a></li>
+                <li><a href="Codes/product.html#baked-goods">Baked Goods</a></li>
+                <li><a href="Codes/product.html#drinks"> Signature Coffee & Drinks</a></li>
+            </ul>
+        </li>
+        <li><a href="Codes/about_us.html">About Us</a></li>
+        <li><a href="Codes/contact_us.html">Contact Us</a></li>
+        <li><a href="Codes/login.html">Login / Register</a></li>
+        <li><a href="Codes/cart.html">Cart</a></li>
+    </ul>
+</nav>
+</header>
+<main>
+<div class="hero-section-container">
+    <h1>Sweet Moments. Delivered.</h1>
+    <a href="Codes/products.html" class="hero-cta-button">ORDER NOW</a>
+    <div class="hero-background-image">
+        <img src="Assets/hero_image.png" alt="a view of mochi bakery and cafe">
+    </div>
+</div>
+
+<div class="category-section-container">
+    <h2>Shop Categories</h2>
+    <div class="category-cards-wrapper">
+        <!------Mochi & Desserts------->
+        <div class="category-card">
+            <img src="Assets/mochi_desserts_cover.png" alt="assortment of mochi desserts on a plate">
+            <h3>Specialty Mochi & Desserts</h3>
+            <a href="Codes/products.html#mochi_desserts" class="view-all-button">View All</a>
         </div>
-        <nav class="main-nav">
+        <!------Baked Goods------->
+        <div class="category-card">
+            <img src="Assets/bakedgoods_cover.png" alt="Slices of artisanal cinnamon rolls">
+            <h3>Artisanal Baked Goods</h3>
+            <a href="Codes/products.html#baked_goods" class="view-all-button">View All</a>
+        </div>
+        <!------Signature Coffee and Drinks------->
+        <div class="category-card">
+            <img src="Assets/matchacoffee&drinks.png" alt="Layered matcha and coffee beverages.">
+            <h3>Signature Coffee and Drinks</h3>
+            <a href="Codes/products.html#drinks" class="view-all-button">View All</a>
+        </div>
+
+    </div>
+</div>
+
+<div class="featured-section-container">
+    <h2>Featured Items</h2>
+    <div class="product-cards-wrapper">
+        <!------Featured Mochi Dessert------->
+        <div class="product-card">
+            <img src="Assets/Strawberry Cheesecake Mochi.png" alt="A pink strawberry dessert.">
+            <h3>Strawberry Mochi Cheesecake</h3>
+            <p class="price">$3.99</p>
+            <button class="add-to-cart-button" onclick="addItemToCart('M001', 'Strawberry Mochi Cheesecake', '3.99')">Add to Cart</button>
+        </div>
+        <!------Featured Matcha Cheesecake Dessert------->
+        <div class="product-card">
+            <img src="Assets/matchaCheesecake.png" alt="A slice of vibrant matcha cheesecake.">
+            <h3>Matcha Cheesecake</h3>
+            <p class="price">$4.99</p>
+            <button class="add-to-cart-button" onclick="addItemToCart('M002', 'Matcha Cheesecake', '4.99')">Add to Cart</button>
+        </div>
+        <!------Featured Caramel Scones ------->
+        <div class="product-card">
+            <img src="Assets/Caramel Drizzle Scones.png" alt="A Scone topped with Caramel drizzle">
+            <h3>Caramel Drizzle Scone</h3>
+            <p class="price">$4.25</p>
+            <button class="add-to-cart-button" onclick="addItemToCart('M003', 'Caramel Drizzle Scone', '4.25')">Add to Cart</button>
+        </div>
+    </div>
+
+</div>
+<!----------About Us Section-------------->
+<div class="about-section-container">
+    <img src="Assets/hero_image4.png" alt="image of the exterior of Mochi Cafe and bakery">
+
+<div>
+    <h2>About Us</h2>
+    <p>Mochi Bakery & Café is a specialty online shop offering a unique blend of high-quality coffee and artisanal baked goods,
+    with a focus on Japanese-inspired Mochi desserts, Dango, and other sweet treats
+    We cater to those seeking a premium, cozy, and comforting experience delivered right to their door.</p>
+    <a href="Codes/about_us.html" class="read-more-button">READ MORE</a>
+    </div>
+</div>
+<aside id="cart-sidebar">
+    <div class="sidebar-header">
+        <h2>Your Sweet Haul</h2>
+        <button id="close-cart-button" aria-label="Close Shopping Cart">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <div class="cart-items-list-container">
+        <p id="cart-empty-message">Your cart is currently empty. Start browsing our treats!</p>
+        
+        <div id="cart-items-list">
+            </div>
+    </div>
+
+    <div class="cart-summary">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Subtotal:</td>
+                    <td id="cart-subtotal">$0.00</td>
+                </tr>
+                <tr>
+                    <td>Discount (10%):</td>
+                    <td id="cart-discount">-$0.00</td>
+                </tr>
+                <tr>
+                    <td>Tax (15%):</td>
+                    <td id="cart-tax">$0.00</td>
+                </tr>
+                <tr class="cart-total-row">
+                    <td><strong>Total:</strong></td>
+                    <td id="cart-total"><strong>$0.00</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="cart-actions">
+        <button id="clear-cart-button" class="secondary-button">Clear All</button>
+        
+        <a href="Codes/checkout.html" id="checkout-link" class="cta-button">Proceed to Checkout</a>
+    </div>
+</aside>
+</main>
+<footer id="main-footer">
+    <div class="footer-content-wrapper">
+        <div class="footer-brand-logo">
+            <img src="Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo">
+            <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
+        </div>
+
+        <div class="footer-nav-links">
+            <h3>Quick Links</h3>
             <ul>
-                <li class="dropdown">
-                    <a href="Codes/products.html">Products</a>
-                    <ul class="dropdown-menu"> 
-                        <li><a href="Codes/product.html#mochi_desserts">Specialty Mochi & Desserts</a></li>
-                        <li><a href="Codes/products.html#baked_goods">Baked Goods</a></li>
-                        <li><a href="Codes/products.html#drinks">Signature Coffee & Drinks</a> </li>
-                    </ul>
-                </li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Codes/products.html">Products</a></li>
                 <li><a href="Codes/about_us.html">About Us</a></li>
                 <li><a href="Codes/contact_us.html">Contact Us</a></li>
+                <li><a href="Codes/registration.html">Get Started</a></li>
             </ul>
-        </nav>
-        <div class="user-auth">
-            <a href="Codes/login.html"><button>LOGIN / REGISTER</button></a>
-            <a href="Codes/cart.html" class="cart-link">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span id="cart-item-count">0</span>
-            </a>
+        </div>
+        <div class="footer-contact-social">
+            <h3>Get In Touch</h3>
+                <p>Email:<a href="mailto:info@mochibakerycafe.com"> info@mochibakerycafe.com</a></p>
+                <p>Phone: +1 678 555-MOCHI </p>
         </div>
 
-        <div class="mobile-controls">
-            <a href="Codes/cart.html" class="cart-link mobile-cart">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span id="cart-item-count-mobile">0</span>
-            </a>
-            <button id="mobile-menu-toggle" aria-label="Open Menu">
-                <i class="fa-solid fa-bars"></i>
-            </button>
+        <div class="social-icons">
+            <a href="#" aria-label="Find us on Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
         </div>
-        <!-------------------MOBILE VIEW-------------------->
-        <nav id="mobile-nav-menu">
-            <ul>
-                <li class="dropdown"><a href="Codes/products.html"> Products </a> 
-                    <ul class="dropdown-menu">
-                        <li><a href="product.html#mochi_desserts">Specialty Mochi & Desserts</a></li>
-                        <li><a href="product.html#baked-goods">Baked Goods</a></li>
-                        <li><a href="product.html#drinks"> Signature Coffee & Drinks</a></li>
-                    </ul>
-                </li>
-                <li><a href="../about_us.html">About Us</a></li>
-                <li><a href="../contact_us.html">Contact Us</a></li>
-                <li><a href="../login.html">Login / Register</a></li>
-                <li><a href="cart.html">Cart</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <div class="hero-section-container">
-            <h1>Sweet Moments. Delivered.</h1>
-            <a href="Codes/products.html" class="hero-cta-button">ORDER NOW</a>
-            <div class="hero-background-image">
-                <img src="/Assets/hero_image.png" alt="a view of mochi bakery and cafe">
-            </div>
-        </div>
-
-        <div class="category-section-container">
-            <h2>Shop Categories</h2>
-            <div class="category-cards-wrapper">
-                <!------Mochi & Desserts------->
-                <div class="category-card">
-                    <img src="Assets/mochi_desserts_cover.png" alt="assortment of mochi desserts on a plate">
-                    <h3>Specialty Mochi & Desserts</h3>
-                    <a href="Codes/products.html#mochi_desserts" class="view-all-button">View All</a>
-                </div>
-                <!------Baked Goods------->
-                <div class="category-card">
-                    <img src="Assets/bakedgoods_cover.png" alt="Slices of artisanal cinnamon rolls">
-                    <h3>Artisanal Baked Goods</h3>
-                    <a href="Codes/products.html#baked_goods" class="view-all-button">View All</a>
-                </div>
-                <!------Signature Coffee and Drinks------->
-                <div class="category-card">
-                    <img src="Assets/matchacoffee&drinks.png" alt="Layered matcha and coffee beverages.">
-                    <h3>Signature Coffee and Drinks</h3>
-                    <a href="Codes/products.html#drinks" class="view-all-button">View All</a>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="featured-section-container">
-            <h2>Featured Items</h2>
-            <div class="product-cards-wrapper">
-                <!------Featured Mochi Dessert------->
-                <div class="product-card">
-                    <img src="Assets/Strawberry Cheesecake Mochi.png" alt="A pink strawberry dessert.">
-                    <h3>Strawberry Mochi Cheesecake</h3>
-                    <p class="price">$3.99</p>
-                    <button class="add-to-cart-button" onclick="addItemToCart('M001', 'Strawberry Mochi Cheesecake', '3.99')">Add to Cart</button>
-                </div>
-                <!------Featured Matcha Cheesecake Dessert------->
-                <div class="product-card">
-                    <img src="Assets/matchaCheesecake.png" alt="A slice of vibrant matcha cheesecake.">
-                    <h3>Matcha Cheesecake</h3>
-                    <p class="price">$4.99</p>
-                    <button class="add-to-cart-button" onclick="addItemToCart('M002', 'Matcha Cheesecake', '4.99')">Add to Cart</button>
-                </div>
-                <!------Featured Caramel Scones ------->
-                <div class="product-card">
-                    <img src="Assets/Caramel Drizzle Scones.png" alt="A Scone topped with Caramel drizzle">
-                    <h3>Caramel Drizzle Scone</h3>
-                    <p class="price">$4.25</p>
-                    <button class="add-to-cart-button" onclick="addItemToCart('M003', 'Caramel Drizzle Scone', '4.25')">Add to Cart</button>
-                </div>
-            </div>
-
-        </div>
-        <!----------About Us Section-------------->
-        <div class="about-section-container">
-            <img src="Assets/hero_image4.png" alt="image of the exterior of Mochi Cafe and bakery">
-        
-        <div>
-            <h2>About Us</h2>
-            <p>Mochi Bakery & Café is a specialty online shop offering a unique blend of high-quality coffee and artisanal baked goods,
-            with a focus on Japanese-inspired Mochi desserts, Dango, and other sweet treats
-            We cater to those seeking a premium, cozy, and comforting experience delivered right to their door.</p>
-            <a href="Codes/about_us.html" class="read-more-button">READ MORE</a>
-            </div>
-        </div>
-        <aside id="cart-sidebar">
-            <div class="sidebar-header">
-                <h2>Your Sweet Haul</h2>
-                <button id="close-cart-button" aria-label="Close Shopping Cart">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div class="cart-items-list-container">
-                <p id="cart-empty-message">Your cart is currently empty. Start browsing our treats!</p>
-                
-                <div id="cart-items-list">
-                    </div>
-            </div>
-
-            <div class="cart-summary">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Subtotal:</td>
-                            <td id="cart-subtotal">$0.00</td>
-                        </tr>
-                        <tr>
-                            <td>Discount (10%):</td>
-                            <td id="cart-discount">-$0.00</td>
-                        </tr>
-                        <tr>
-                            <td>Tax (15%):</td>
-                            <td id="cart-tax">$0.00</td>
-                        </tr>
-                        <tr class="cart-total-row">
-                            <td><strong>>Total:</strong></td>
-                            <td id="cart-total"><strong>$0.00</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="cart-actions">
-                <button id="clear-cart-button" class="secondary-button">Clear All</button>
-                
-                <a href="Codes/checkout.html" id="checkout-link" class="cta-button">Proceed to Checkout</a>
-            </div>
-        </aside>
-        </main>
-        <footer id="main-footer">
-            <div class="footer-content-wrapper">
-                <div class="footer-brand-logo">
-                    <img src="Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo">
-                    <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
-                </div>
-
-                <div class="footer-nav-links">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="Codes/products.html">Products</a></li>
-                        <li><a href="Codes/about_us.html">About Us</a></li>
-                        <li><a href="Codes/contact_us.html">Contact Us</a></li>
-                        <li><a href="Codes/registration.html">Get Started</a></li>
-                    </ul>
-                </div>
-                <div class="footer-contact-social">
-                    <h3>Get In Touch</h3>
-                        <p>Email:<a href="mailto:info@mochibakerycafe.com"> info@mochibakerycafe.com</a></p>
-                        <p>Phone: +1 678 555-MOCHI </p>
-                </div>
-
-                <div class="social-icons">
-                    <a href="#" aria-label="Find us on Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
-                </div>
-                </div>
-            </div>
-        </footer>
+    </div>
+</footer>
 <script src="script.js"></script>    
 </body>
 </html>
