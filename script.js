@@ -28,20 +28,26 @@ if (menuToggleButton) {
 /* IA#2: User Authentication - Login Function */
 /* Purpose: Handle user login with TRN authentication for invoice system */
 /* Modified by: Jamarie McGlashen (2408376) - Added TRN support for invoices */
+/* updated by: Tiffany Maragh 1705946 - Fixed authentication logic */
 function handleLogin(event) {
     event.preventDefault();
 
+    // 1. Get input values
     const trnInput = document.getElementById('login-trn')?.value.trim();
     const passwordInput = document.getElementById('login-password').value;
-
-    // Load attempts counter (use sessionStorage for current session counter)
+    
+    // 2. Setup (must be at the top)
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
     let loginAttempts = parseInt(sessionStorage.getItem('loginAttempts')) || 0;
     const MAX_ATTEMPTS = 3; 
+    
+    // --- DEBUG CHECK ---
+    //console.log("LOGIN DEBUG: TRN:", trnInput, "Password:", passwordInput); 
 
     // --- 1. CHECK LOCKOUT STATUS ---
     if (loginAttempts >= MAX_ATTEMPTS) {
         alert("Account locked. You have exceeded the maximum login attempts.");
-        window.location.href = 'error-account-locked.html'; // Redirect on final failure [cite: 30]
+        window.location.href = 'error-account-locked.html';
         return;
     }
 
@@ -57,27 +63,28 @@ function handleLogin(event) {
         return;
     }
 
-    // --- 3. USER AUTHENTICATION ---
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-    // User login is based on TRN and password [cite: 27]
-    const user = registeredUsers.find(u => u.trn === trnInput && u.password === passwordInput);
+    // --- 3. USER AUTHENTICATION (The correct two-step search) ---
+    // STEP A: Find the user object based ONLY on the unique TRN.
+    const user = registeredUsers.find(u => u.trn === trnInput); 
 
-    if (user) {
+    // STEP B: Check if user was found AND the password matches
+    if (user && user.password === passwordInput) { 
         // --- SUCCESS ---
-        sessionStorage.removeItem('loginAttempts'); // Clear attempts
+        sessionStorage.removeItem('loginAttempts'); 
 
+        // Store user data
         localStorage.setItem('currentUser', `${user.firstName} ${user.lastName}`);
         localStorage.setItem('currentUserTRN', user.trn);
         localStorage.setItem('isAdmin', 'false');
         
         updateHeaderWelcomeMessage();
         alert('Login Successful! Welcome ' + user.firstName);
-        window.location.href = '../index.html'; // Redirect to homepage/products [cite: 30]
-
+        window.location.href = '../index.html'; 
+        return; 
     } else {
-        // --- FAILURE ---
+        // --- FAILURE PATH ---
         loginAttempts++;
-        sessionStorage.setItem('loginAttempts', loginAttempts); // Increment and store new attempt count 
+        sessionStorage.setItem('loginAttempts', loginAttempts);
 
         const remaining = MAX_ATTEMPTS - loginAttempts;
 
@@ -85,7 +92,7 @@ function handleLogin(event) {
             alert(`Login Failed: Incorrect TRN or password. ${remaining} attempts remaining.`);
         } else {
             alert("Login Failed. Maximum attempts exceeded. Account locked.");
-            window.location.href = 'error-account-locked.html'; // Redirect on final failure [cite: 30]
+            window.location.href = 'error-account-locked.html';
         }
         
         const pwdEl = document.getElementById('login-password');
@@ -300,7 +307,10 @@ function validateForm() {
             dob: dob,
             gender: gender,
             registeredAt: new Date().toISOString()
+            
         };
+        //DEBUGGING TO FIND PASSWORD MISMATCH ISSUES
+       // console.log("REGISTER DEBUG: Password being SAVED:", userData.password);
         saveRegistrationData(userData);
         alert('Registration Successful! You can now log in.');
         window.location.href = './login.html';
