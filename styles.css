@@ -1024,141 +1024,494 @@
     }
 }
 
-/* IA#2: Off-Canvas Cart Sidebar Styling */
+/*====CART PAGE STYLES====*/
 
+/* Main Cart Page Container */
+.cart-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    min-height: calc(100vh - 200px); /* Adjust based on your header/footer height */
+    background: linear-gradient(135deg, var(--milk) 0%, #f8f4f0 100%);
+}
+
+/* From sidebar to full page */
 #cart-sidebar {
-    position: fixed; /* Stays in the same position relative to the viewport */
-    top: 0;
-    right: 0;
     width: 100%;
-    max-width: 400px; /* Standard width for a sidebar */
-    height: 100%;
-    background-color: var(--milk); 
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-    z-index: 2000; /* Ensures it sits above everything else, including the header */
-    padding: 20px;
-    
-    /* Initial State: Hides the menu off-screen */
-    transform: translateX(100%); 
-    transition: transform 0.4s ease-out; /* Smooth sliding animation */
-    
-    display: flex;
-    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: 1px solid rgba(var(--coffee-rgb, 60, 28, 13), 0.1);
 }
 
-/* State when JS adds the 'open' class */
-#cart-sidebar.open {
-    transform: translateX(0); /* Slides the menu into view */
-}
-
-/* --- Header and Close Button --- */
+/* Cart Header - Full Width */
 .sidebar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--oat-milk);
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-}
-.sidebar-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    color: var(--coffee);
-}
-#close-cart-button {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--roasted-chestnut);
-    cursor: pointer;
+    padding: 2rem 2.5rem;
+    background: linear-gradient(to right, var(--roasted-chestnut), var(--caramel-drizzle));
+    color: white;
+    border-bottom: 3px solid var(--oat-milk);
 }
 
-/* --- Cart Items List Area --- */
+.sidebar-header h2 {
+    font-size: 2.2rem;
+    margin: 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sidebar-header h2::before {
+    font-size: 2rem;
+}
+
+#close-cart-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+#close-cart-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Cart Items Section */
 .cart-items-list-container {
-    flex-grow: 1; /* Allows the list to fill the vertical space */
-    overflow-y: auto; /* Enables scrolling if items overflow */
+    padding: 2.5rem;
+    min-height: 300px;
 }
+
 #cart-empty-message {
-    color: var(--cinnamon-latte);
     text-align: center;
-    padding: 30px 10px;
+    padding: 4rem 2rem;
+    font-size: 1.2rem;
+    color: var(--coffee);
+    background: var(--milk);
+    border-radius: 15px;
+    border: 2px dashed var(--oat-milk);
+    margin: 0;
 }
-/* Styling for dynamically created items (Simplified) */
+
+#cart-empty-message::before {
+    content: "🍡";
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* Cart Items Grid Layout */
 #cart-items-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.cart-item {
+    background: var(--milk);
+    border-radius: 15px;
+    padding: 1.5rem;
+    border: 2px solid var(--oat-milk);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cart-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(var(--coffee-rgb, 60, 28, 13), 0.1);
+    border-color: var(--caramel-drizzle);
+}
+
+.cart-item .item-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--coffee);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--oat-milk);
+}
+
+/* Item Controls - Improved Layout */
+.cart-item .item-controls {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 1rem;
 }
 
-/* --- Summary and Actions --- */
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.quantity-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--caramel-drizzle);
+    background: white;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--caramel-drizzle);
+    transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background: var(--caramel-drizzle);
+    color: white;
+    transform: scale(1.1);
+}
+
+.item-quantity {
+    width: 70px;
+    height: 40px;
+    text-align: center;
+    border: 2px solid var(--oat-milk);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--coffee);
+    background: white;
+}
+
+.item-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--roasted-chestnut);
+    margin: 0.5rem 0;
+    text-align: center;
+    padding: 0.5rem;
+    background: linear-gradient(135deg, var(--milk), var(--oat-milk));
+    border-radius: 8px;
+    border: 1px solid var(--cinnamon-latte);
+}
+
+.remove-btn {
+    background: linear-gradient(135deg, #ff6b6b, #ff5252);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.remove-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+.remove-btn i {
+    font-size: 0.9rem;
+}
+
+/* Cart Summary - Full Width */
+.cart-summary {
+    padding: 2.5rem;
+    background: linear-gradient(135deg, var(--milk) 0%, #f0ebe4 100%);
+    border-top: 3px solid var(--oat-milk);
+}
+
 .cart-summary table {
     width: 100%;
-    margin-top: 20px;
-    border-top: 1px solid var(--oat-milk);
-    padding-top: 15px;
-    font-size: 1rem;
-    color: var(--roasted-chestnut);
-}
-.cart-summary td:nth-child(2) {
-    text-align: right; /* Align numbers to the right */
-    font-weight: 600;
-}
-.cart-total-row td {
-    font-size: 1.2rem;
-    font-weight: 700 !important;
-    color: var(--coffee);
+    max-width: 500px;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
 }
 
+.cart-summary td {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+.cart-summary td:first-child {
+    color: var(--coffee);
+    font-weight: 500;
+    background: white;
+    border-radius: 10px 0 0 10px;
+    border: 2px solid var(--oat-milk);
+    border-right: none;
+}
+
+.cart-summary td:last-child {
+    color: var(--roasted-chestnut);
+    font-weight: 600;
+    background: white;
+    border-radius: 0 10px 10px 0;
+    border: 2px solid var(--oat-milk);
+    border-left: none;
+    text-align: right;
+}
+
+.cart-total-row td {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--coffee) !important;
+    border-color: var(--caramel-drizzle) !important;
+}
+
+/* Cart Actions - Full Width */
 .cart-actions {
     display: flex;
     justify-content: space-between;
-    padding-top: 20px;
-    border-top: 1px solid (var(--oat-milk));
-    margin-top: 20px;
+    align-items: center;
+    padding: 2.5rem;
+    background: var(--milk);
+    border-top: 2px solid var(--oat-milk);
+    gap: 1.5rem;
 }
-.cart-actions .cta-button {
-    /* Styles shared with your general CTA button */
-    background-color: var(--mochi-accent);
+
+.secondary-button {
+    background: linear-gradient(135deg, var(--oat-milk), var(--cinnamon-latte));
     color: var(--coffee);
+    border: 2px solid var(--caramel-drizzle);
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.secondary-button:hover {
+    background: linear-gradient(135deg, var(--cinnamon-latte), var(--caramel-drizzle));
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(var(--coffee-rgb, 60, 28, 13), 0.15);
+}
+
+.cta-button {
+    background: linear-gradient(135deg, var(--roasted-chestnut), var(--coffee));
+    color: white;
     border: none;
+    padding: 1rem 3rem;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
     text-decoration: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 700;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    padding: 12px 15px;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for CTA */
-    flex: 1;
-    margin-left: 10px;
     text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-grow: 1;
+    max-width: 300px;
 }
-.cart-actions .secondary-button {
-    /* Clear button style */
-    background-color: transparent;
-    border: 2px solid var(--roasted-chestnut);
+
+.cta-button:hover {
+    background: linear-gradient(135deg, var(--caramel-drizzle), var(--roasted-chestnut));
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(var(--coffee-rgb, 60, 28, 13), 0.2);
+}
+
+/* Cart Header Badge */
+.cart-header-badge {
+    display: inline-block;
+    background: var(--mochi-accent);
+    color: var(--coffee);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-left: 1rem;
+    border: 2px solid var(--caramel-drizzle);
+}
+
+/* Progress Bar */
+.cart-progress {
+    padding: 0 2.5rem 2.5rem;
+    background: var(--milk);
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--oat-milk);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--matcha-accent), var(--caramel-drizzle));
+    width: 0%;
+    transition: width 1s ease;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    color: var(--coffee);
+    font-size: 0.9rem;
+}
+
+/* Cart Item Count Display */
+.cart-count-display {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: var(--matcha-accent);
+    color: var(--coffee);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border: 2px solid var(--caramel-drizzle);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .cart-page-container {
+        padding: 1rem;
+    }
+    
+    #cart-items-list {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .sidebar-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .cart-actions {
+        flex-direction: column;
+    }
+    
+    .secondary-button, .cta-button {
+        width: 100%;
+        max-width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    #cart-items-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .cart-items-list-container,
+    .cart-summary,
+    .cart-actions {
+        padding: 1.5rem;
+    }
+    
+    .cart-summary table {
+        width: 100%;
+    }
+    
+    .cart-summary td {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-page-container {
+        padding: 0.5rem;
+    }
+    
+    .sidebar-header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .quantity-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .cart-item {
+        padding: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cart-item {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.cart-summary {
+    animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+/* Empty Cart State Enhancement */
+.empty-cart-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-cart-icon {
+    font-size: 5rem;
+    color: var(--oat-milk);
+    margin-bottom: 1.5rem;
+    animation: bounce 2s infinite;
+}
+
+/* Special Offers Banner */
+.cart-offer-banner {
+    background: linear-gradient(135deg, var(--matcha-accent), var(--mochi-accent));
+    color: var(--coffee);
+    padding: 1rem 2.5rem;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 2px solid var(--caramel-drizzle);
+}
+
+.cart-offer-banner i {
+    margin-right: 0.5rem;
     color: var(--roasted-chestnut);
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 700;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    flex: 1;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for CTA */
-    margin-right: 10px;
-}
-.cart-actions .cta-button:hover {
-    background-color: var(--roasted-chestnut);
-    color: var(--milk);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-.cart-actions .secondary-button:hover {
-    background-color: var(--roasted-chestnut);
-    color: var(--milk);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* IA#2: Checkout Page Styling */

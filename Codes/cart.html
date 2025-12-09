@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - Mochi Bakery & Cafe</title>
-    
-    <link rel="stylesheet" href="../styles.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=playfair+display">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=dm+sans">
+    <title>Your Cart - Mochi Bakery & Cafe</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header id="main-header">
@@ -63,36 +60,55 @@
             </ul>
         </nav>
     </header>
+    <main class="cart-page-container">
+        <aside id="cart-sidebar">
+            <div class="sidebar-header">
+                <h2>Your Sweet Haul</h2>
+            </div>
 
-    <main>
-        <div class="products-main-content">
-            <h1>Our Full Menu</h1>
-            
-            <section id="mochi_desserts" class="product-category-section">
-                <h2>Specialty Mochi & Desserts</h2>
-                <p class="category-description">Our signature Japanese-inspired Mochi desserts, including classic Daifuku, innovative flavors, and delicious cheesecake creations.</p>
-                <div id="mochi-products" class="product-grid-wrapper"></div>
-            </section>
+            <div class="cart-items-list-container">
+                <p id="cart-empty-message">Your cart is currently empty. Start browsing our treats!</p>
+                
+                <div id="cart-items-list">
+                    </div>
+            </div>
 
-            <!-- Baked Goods -->
-            <section id="baked_goods" class="product-category-section">
-                <h2>Artisanal Baked Goods</h2>
-                <p class="category-description">Freshly baked pastries including our famous cinnamon swirls and caramel scones.</p>
-                <div id="baked-products" class="product-grid-wrapper"></div>
-            </section>
+            <div class="cart-summary">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td id="cart-subtotal">$0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Discount (10%):</td>
+                            <td id="cart-discount">-$0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Tax (15%):</td>
+                            <td id="cart-tax">$0.00</td>
+                        </tr>
+                        <tr class="cart-total-row">
+                            <td>**Total:**</td>
+                            <td id="cart-total">**$0.00**</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-            <!-- Drinks -->
-            <section id="drinks" class="product-category-section">
-                <h2>Signature Coffee & Drink Blends</h2>
-                <p class="category-description">Premium coffee blends, specialty matcha, and unique layered lattes.</p>
-                <div id="drink-products" class="product-grid-wrapper"></div>
-            </section>
-        </div>
+            <div class="cart-actions">
+                <button id="clear-cart-button" class="secondary-button">Clear All</button>
+                
+                <a href="checkout.html" id="checkout-link" class="cta-button">Proceed to Checkout</a>
+            </div>
+        </aside>
     </main>
-        <footer id="main-footer">
+
+    <footer id="main-footer">
             <div class="footer-content-wrapper">
                 <div class="footer-brand-logo">
-                    <img src="../Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo"> <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
+                    <img src="../Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo">
+                    <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
                 </div>
 
                 <div class="footer-nav-links">
@@ -116,9 +132,10 @@
                     <a href="#" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="#" aria-label="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
                 </div>
+                </div>
             </div>
         </footer>
 
-    <script src="../script.js"></script> 
+    <script src="../script.js"></script>
 </body>
 </html>

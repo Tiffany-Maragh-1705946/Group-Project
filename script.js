@@ -273,38 +273,7 @@ function handleCancelRegistration() {
 
 
 
-    /*IA#2: Event Handling - Cart Sidebar Toggle
-    Creator: Tiffany Maragh 1705946 */
 
-const cartSidebar = document.getElementById('cart-sidebar');
-const openCartButtons = document.querySelectorAll('.cart-link'); // Selects all cart icons
-const closeCartButton = document.getElementById('close-cart-button');
-
-// Function to open the cart sidebar
-function openCartSidebar(event) {
-// Prevent navigation if the user clicks a cart link
-    if (event) {
-        event.preventDefault(); 
-    }
-    cartSidebar.classList.add('open');
-    // CORRECTED: Call the main rendering function directly
-    renderCartItems(); 
-}
-
-// Function to close the cart sidebar
-function closeCartSidebar() {
-    cartSidebar.classList.remove('open');
-}
-
-// Attach event listeners to all cart icons
-openCartButtons.forEach(button => {
-    button.addEventListener('click', openCartSidebar);
-});
-
-// Attach event listener to the close button
-if (closeCartButton) {
-    closeCartButton.addEventListener('click', closeCartSidebar);
-}
 /* ============================
    PRODUCT LIST & ADD TO CART
   Dhi-andra Neath
@@ -573,9 +542,52 @@ function handleClearCart() {
     localStorage.removeItem('shoppingCart');
     updateCartItemCount();
     renderCartItems(); 
-    closeCartSidebar(); // Close the sidebar after clearing
     alert('Your cart has been cleared!');
+// Finish clearing the cart
+localStorage.removeItem('shoppingCart');
+updateCartItemCount();
+renderCartItems(); 
+alert('Your cart has been cleared!');
 }
+
+/* DOM initialization for cart.html: wire up buttons and render the cart */
+document.addEventListener('DOMContentLoaded', () => {
+// Only run this on the cart page to avoid errors on other pages
+if (!document.querySelector('.cart-page-container')) return;
+
+// Initial render and counters
+renderCartItems();
+updateCartItemCount();
+attachCartItemListeners();
+
+// Checkout button -> checkout page
+const checkoutBtn = document.getElementById('checkout-button');
+if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = 'checkout.html';
+    });
+}
+
+// Continue shopping button -> products page
+const continueBtn = document.getElementById('continue-shopping-button');
+if (continueBtn) {
+    continueBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = 'products.html';
+    });
+}
+
+// Open/close sidebar controls (if present in your DOM)
+const openCartBtn = document.getElementById('open-cart-button');
+const closeCartBtn = document.getElementById('close-cart-button');
+if (openCartBtn) openCartBtn.addEventListener('click', openCartSidebar);
+if (closeCartBtn) closeCartBtn.addEventListener('click', closeCartSidebar);
+
+// Ensure clear cart control (if outside attachCartItemListeners)
+const clearBtn = document.getElementById('clear-cart-button');
+if (clearBtn) clearBtn.addEventListener('click', handleClearCart);
+});
 
 /* IA#2: Function - displayCheckoutSummary() */
 /* Purpose: Populates the item list and financial summary on checkout.html. */
