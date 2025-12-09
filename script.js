@@ -32,44 +32,62 @@ function handleLogin(event) {
     event.preventDefault();
 
     const trnInput = document.getElementById('login-trn')?.value.trim();
-    const passwordInput = document.getElementById('login-password').value.trim();
+    const passwordInput = document.getElementById('login-password').value;
 
-    console.log("DEBUG: Login attempt with:", trnInput);
+    // Load attempts counter (use sessionStorage for current session counter)
+    let loginAttempts = parseInt(sessionStorage.getItem('loginAttempts')) || 0;
+    const MAX_ATTEMPTS = 3; 
 
-    // ============================================
-    // ADMIN LOGIN - SIMPLE PATH
-    // ============================================
+    // --- 1. CHECK LOCKOUT STATUS ---
+    if (loginAttempts >= MAX_ATTEMPTS) {
+        alert("Account locked. You have exceeded the maximum login attempts.");
+        window.location.href = 'error-account-locked.html'; // Redirect on final failure [cite: 30]
+        return;
+    }
+
+    // --- 2. ADMIN LOGIN ---
     if (trnInput === '999-999-999' && passwordInput === 'Admin123!') {
-        console.log("DEBUG: Admin login successful");
-
+        sessionStorage.removeItem('loginAttempts'); 
         localStorage.setItem('currentUser', 'Administrator');
         localStorage.setItem('currentUserTRN', '999-999-999');
         localStorage.setItem('isAdmin', 'true');
-
         updateHeaderWelcomeMessage();
         alert('Admin Login Successful! Welcome Administrator');
-
-        // SIMPLE: Always use relative path
-        // Since login.html is in Codes/, admin_dashboard.html should be in same folder
-        window.location.href = 'Admin_dash.html';
+        window.location.href = 'Admin_dash.html'; 
         return;
     }
-    // ============================================
 
-    // Check against registered users
+    // --- 3. USER AUTHENTICATION ---
     const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+    // User login is based on TRN and password [cite: 27]
     const user = registeredUsers.find(u => u.trn === trnInput && u.password === passwordInput);
 
     if (user) {
+        // --- SUCCESS ---
+        sessionStorage.removeItem('loginAttempts'); // Clear attempts
+
         localStorage.setItem('currentUser', `${user.firstName} ${user.lastName}`);
         localStorage.setItem('currentUserTRN', user.trn);
         localStorage.setItem('isAdmin', 'false');
-
+        
         updateHeaderWelcomeMessage();
         alert('Login Successful! Welcome ' + user.firstName);
-        window.location.href = '../index.html';
+        window.location.href = '../index.html'; // Redirect to homepage/products [cite: 30]
+
     } else {
-        alert('Login Failed: Incorrect TRN or password.');
+        // --- FAILURE ---
+        loginAttempts++;
+        sessionStorage.setItem('loginAttempts', loginAttempts); // Increment and store new attempt count 
+
+        const remaining = MAX_ATTEMPTS - loginAttempts;
+
+        if (remaining > 0) {
+            alert(`Login Failed: Incorrect TRN or password. ${remaining} attempts remaining.`);
+        } else {
+            alert("Login Failed. Maximum attempts exceeded. Account locked.");
+            window.location.href = 'error-account-locked.html'; // Redirect on final failure [cite: 30]
+        }
+        
         const pwdEl = document.getElementById('login-password');
         if (pwdEl) pwdEl.value = '';
     }
@@ -102,10 +120,6 @@ function updateHeaderWelcomeMessage(username = null) {
         removeLogoutButton();
     }
 }
-// Check login status when ANY page loads
-document.addEventListener('DOMContentLoaded', () => {
-    updateHeaderWelcomeMessage(); // ← Call without parameter to check localStorage
-});
 
 /* Event Listener for Login Form */
 const loginForm = document.getElementById('login-form');
@@ -148,7 +162,13 @@ function saveRegistrationData(userData) {
 
     console.log("User registered:", userData.email, "Total registered users:", registeredUsers.length);
 }
-
+/* User-Defined Function - handleRegistrationSubmit() */
+/* Purpose: Handles the registration form submission event. */
+/* Creator: Tiffany Maragh 1705946 */ 
+function handleRegistrationSubmit(event) {
+    event.preventDefault(); // CRITICAL: Stop the browser from refreshing!
+    validateForm(); 
+}
 /* User-Defined Function - validateForm() */
 /* Purpose: Performs comprehensive client-side validation for all registration fields. */
 /* Creator: Tiffany Maragh 1705946 */
@@ -296,13 +316,71 @@ function handleCancelRegistration() {
         window.location.href = '../index.html';
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const cancelRegButton = document.getElementById('cancel-registration-button');
-    if (cancelRegButton) {
-        cancelRegButton.addEventListener('click', handleCancelRegistration);
+/* GetUserInvoices() */
+/* Purpose: Searches the AllInvoices array in localStorage by TRN. */
+/* Creator: Tiffany Maragh 1705946 */
+function GetUserInvoices(trn) {
+    if (!trn || trn.trim() === '') {
+        console.error("Error: TRN is required for GetUserInvoices.");
+        return [];
     }
-});
+    
+    // 1. Load All Invoices
+    const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+    
+    // 2. Filter invoices based on the provided TRN
+    const userInvoices = allInvoices.filter(invoice => invoice.customerTRN === trn.trim());
+
+    if (userInvoices.length > 0) {
+        console.log(`✅ Found ${userInvoices.length} invoice(s) for TRN: ${trn}`);
+        userInvoices.forEach(invoice => {
+            console.log(`- Invoice ${invoice.invoiceNumber}, Total: $${invoice.total}, Date: ${invoice.date}`);
+        });
+    } else {
+        console.log(`❌ No invoices found for TRN: ${trn}`);
+    }
+
+    // This function must return the array of invoices for the dashboard to display them
+    return userInvoices; 
+}
+
+/* User-Defined Function - resetPassword() */
+/* Purpose: Allows user to change their password by matching TRN. */
+/* Creator: Tiffany Maragh 1705946 */
+function resetPassword() {
+    const trn = prompt('Enter your TRN (000-000-000) to reset your password:');
+    
+    if (trn && trn.match(/^\d{3}-\d{3}-\d{3}$/)) {
+        let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        const userIndex = registeredUsers.findIndex(u => u.trn === trn);
+        
+        if (userIndex !== -1) {
+            const newPassword = prompt('Enter your new password (must be 8+ characters):');
+            
+            if (newPassword && newPassword.length >= 8) {
+                // Update password in the core registeredUsers array
+                registeredUsers[userIndex].password = newPassword; 
+                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                
+                // Also update the redundant RegistrationData array for compatibility
+                let registrationData = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+                const regIndex = registrationData.findIndex(u => u.trn === trn);
+                if (regIndex !== -1) {
+                    registrationData[regIndex].password = newPassword;
+                    localStorage.setItem('RegistrationData', JSON.stringify(registrationData));
+                }
+
+                alert('Password successfully updated! You can now log in with your new password.');
+            } else {
+                alert('Password reset failed. Password must be 8 characters or longer.');
+            }
+        } else {
+            alert('Error: TRN not found.');
+        }
+    } else if (trn !== null) {
+        alert('Invalid TRN format. Please use 000-000-000 format.');
+    }
+}
 
 /* IA#2: Event Handling - Cart Sidebar Toggle */
 /* Creator: Tiffany Maragh 1705946 */
@@ -381,8 +459,6 @@ function displayProducts() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', displayProducts);
-
 /* IA#2: User-Defined Function - updateCartItemCount() */
 /* Creator: Tiffany Maragh 1705946 */
 function updateCartItemCount() {
@@ -396,7 +472,52 @@ function updateCartItemCount() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', updateCartItemCount);
+document.addEventListener('DOMContentLoaded', function () {
+    
+    // --- 1. HEADER & AUTHENTICATION SETUP ---
+    checkLoginStatus(); 
+    updateHeaderWelcomeMessage();
+    updateCartItemCount(); 
+    
+    // --- 2. REGISTRATION FORM SUBMISSION FIX (CRITICAL) ---
+    // Attaches the handler to prevent the default form submission and control the redirect.
+    const registrationForm = document.getElementById('registration-form');
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', handleRegistrationSubmit);
+    }
+    
+    // ATTACHMENT FOR CANCEL BUTTONS
+    const cancelRegButton = document.getElementById('cancel-reg-button');
+    if (cancelRegButton) {
+        cancelRegButton.addEventListener('click', handleCancelRegistration);
+    }
+    
+    // --- 3. PAGE CONTENT SETUP ---
+    displayProducts(); // Displays products on the product pages.
+    
+    // INVOICE PAGE SETUP
+    if (window.location.pathname.includes('invoice.html')) {
+        displayInvoice();
+    }
+    
+    // CHECKOUT PAGE SETUP
+    if (document.querySelector('.checkout-page-container')) {
+        displayCheckoutSummary();
+        attachCartItemListeners(); // Attach listeners for any cart controls rendered on checkout
+    }
+    
+    // CHECKOUT/ORDER CANCELLATION
+    const cancelButton = document.getElementById('cancel-button'); // Assumed Checkout Cancel
+    if (cancelButton) {
+        cancelButton.addEventListener('click', handleCancelOrder);
+    }
+
+    const confirmForm = document.getElementById('shipping-form');
+    if (confirmForm) {
+        confirmForm.addEventListener('submit', handleConfirmOrder);
+    }
+});
+
 
 /* IA#2: User-Defined Function - addItemToCart() */
 /* Creator: Tiffany Maragh 1705946 */
@@ -623,23 +744,6 @@ function displayCheckoutSummary() {
     }
 }
 
-/* IA#2: Checkout Page Event Listeners */
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('.checkout-page-container')) {
-        displayCheckoutSummary();
-        attachCartItemListeners();
-    }
-
-    const cancelButton = document.getElementById('cancel-button');
-    if (cancelButton) {
-        cancelButton.addEventListener('click', handleCancelOrder);
-    }
-
-    const confirmForm = document.getElementById('shipping-form');
-    if (confirmForm) {
-        confirmForm.addEventListener('submit', handleConfirmOrder);
-    }
-});
 
 function handleCancelOrder() {
     const confirmation = confirm("Are you sure you want to cancel your order? Your cart will be cleared.");
@@ -860,12 +964,6 @@ function handleConfirmOrder(event) {
     }
 }
 
-// Make sure invoice displays when page loads
-document.addEventListener('DOMContentLoaded', function () {
-    if (window.location.pathname.includes('invoice.html')) {
-        displayInvoice();
-    }
-});
 
 function printInvoice() {
     window.print();
@@ -1017,8 +1115,3 @@ function removeLogoutButton() {
     }
 }
 
-// Update DOMContentLoaded to check login status
-document.addEventListener('DOMContentLoaded', function () {
-    checkLoginStatus();
-    updateHeaderWelcomeMessage();
-});
