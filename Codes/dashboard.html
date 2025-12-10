@@ -1,0 +1,139 @@
+<!-- ============================================
+     Allana Dunkley
+     2300290
+     Dashboard.html for User
+     ============================================ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Mochi Bakery Cafe</title>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=playfair+display">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=dm+sans">
+</head>
+<body>
+<header id="main-header">
+<div class="logo">
+    <a href="../index.html"><img src="../Assets/1.png" alt="mochi bakery and cafe white logo" width="100" height="auto"></a>
+</div>
+<nav class="main-nav">
+<ul>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="products.html">Products</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+</ul>
+</nav>
+
+<div class="user-auth">
+<a href="login.html"><button>LOGIN / REGISTER</button></a>
+<a href="cart.html" class="cart-link">
+<i class="fa-solid fa-cart-shopping"></i>
+<span id="cart-item-count">0</span>
+</a>
+</div>
+</header>
+
+<main class="invoice-page">
+<h1><i class="fas fa-receipt"></i>List of User's Invoices</h1>
+
+<div class="invoicelist-card">
+    <div id="user-invoice-history"> </div>
+<div class="invoicelist-actions">
+<a href="../index.html" class="viewbtn">
+    <i class="fas fa-home"></i> Back to Home
+</a>
+</div>
+</div>
+</main>
+
+<footer id="main-footer">
+<div class="footer-content-wrapper">
+<div class="footer-brand-logo">
+    <img src="../Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo">
+    <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
+</div>
+<div class="footer-nav-links">
+<h3>Quick Links</h3>
+<ul>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="products.html">Products</a></li>
+    <li><a href="login.html">Login / Register</a></li>
+</ul>
+</div>
+</div>
+
+<script src="../script.js"></script>
+</body>
+</html>
+<script>
+
+    /*Question Six C- Show the user invoice on their own dashboard*/
+
+    let globalUserInvoices = [];
+    //Prompt the user to enter their TRN to view all their invoices//
+
+    function displayUserHistoryInvoices(userTRNFromPrompt) {
+        const allUsers = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+        const currentUser = allUsers.find(user => user.trn === userTRNFromPrompt);
+        const historyContainer = document.getElementById('user-invoice-history');
+        historyContainer.innerHTML = '';
+
+        if (!currentUser) {
+            historyContainer.innerHTML = `<p>Error Message :Wrong TRN # ${userTRNFromPrompt} enter. There is no record in the system. Try again .</p>`;
+            return;
+        }//User's TRN not found display error messsage
+
+        const userInvoices = currentUser.invoices || [];//Find all invoice for the customer
+
+        if (userInvoices.length === 0) {
+            historyContainer.innerHTML = `<p>Hi ${CurrentUser.firstName}There is no previous invoices for TRN ${userTRNFromPrompt}.</p>`;
+            return;
+        }
+        //When the invoice is found the dashbook will display this array//
+        userInvoices.forEach(invoice => {
+            const invoiceCard = document.createElement('div');
+            
+            invoiceCard.innerHTML = `
+                <h4>Invoice #: ${invoice.invoiceNumber}</h4>
+                <p><strong>Date:</strong> ${invoice.date} at ${invoice.time}</p>
+                <p><strong>Total:</strong> $${invoice.total}</p>
+                <p><strong>Status:</strong> ${invoice.status}</p>
+                <button onclick="viewSpecificInvoice('${invoice.invoiceNumber}')" 
+                class="viewbtn">View Details</button> 
+                <hr>
+            `;
+            historyContainer.appendChild(invoiceCard);
+        });
+    }
+
+    function viewSpecificInvoice(invoiceNumber) {
+        const invoiceToShow = globalUserInvoices.find(inv => inv.invoiceNumber === invoiceNumber);
+
+        if (invoiceToShow) {
+            localStorage.setItem('lastInvoice', JSON.stringify(invoiceToShow));
+            window.location.href = 'invoice.html';
+        } else {
+            alert('Invoice details not found.'); //If no invoice is not found. Message will be displayed
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const userTRN = window.prompt("Please enter your TRN number:");//Prompt the user for their TRN when they view dashboard page.
+        
+        if (userTRN && userTRN.trim() !== '') {
+            displayUserHistoryInvoices(userTRN.trim()); //Call the function to display the user invoice.
+            const allUsers = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+            const currentUser = allUsers.find(user => user.trn === userTRN.trim());
+            if (currentUser) {
+                globalUserInvoices = currentUser.invoices || [];
+            }
+        } else {
+            document.getElementById('user-invoice-history').innerHTML = "<p>TRN entry empty. Cannot display user invoices. Please try again</p>";
+        }
+    });
+
+</script>
