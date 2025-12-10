@@ -869,7 +869,7 @@ function displayInvoice() {
         </div>
     `;
 }
-
+//Function use to display all invoices in admin dashboard /Allana Dunkley
 function ShowInvoices() {
     const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
 
