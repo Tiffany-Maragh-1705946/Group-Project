@@ -2709,3 +2709,35 @@ JAMARIE MCGLASHEN
         width: 100%;
     }
 }
+/*Allana Dunkley User Dashboard page styling */
+#user-invoice-history {
+    background: var(--mochi-accent);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+}
+.viewbtn{
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.viewbtn {
+    background: var(--matcha-accent);
+    color: var(--coffee);
+    border: none;
+    cursor: pointer;
+}
+.invoicelist-card {
+    background: var(--milk);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 40px;
+    margin-bottom: 30px;
+}
