@@ -28,6 +28,10 @@
                 <li><a href="contact_us.html">Contact Us</a></li>
             </ul>
         </nav>
+        <div class="user-info-display">
+            <span id="welcome-message-header"></span> 
+        </div>
+        
         <div class="user-auth">
             <a href="login.html"><button>LOGIN / REGISTER</button></a>
             <a href="cart.html" class="cart-link">
@@ -66,7 +70,7 @@
     <section class="auth-container">
         <h2>Create an Account</h2>
         
-        <form id="registration-form" onsubmit="return validateForm()"> 
+        <form id="registration-form"> 
                             <!--------TRN Input -------->
             <label for="reg-trn">TRN (Tax Registration Number):</label>
             <input type="text" id="reg-trn" required placeholder="000-000-000">

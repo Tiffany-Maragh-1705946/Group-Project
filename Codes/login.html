@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Login - Mochi Bakery Cafe</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=playfair+display">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=dm+sans">
 </head>
 <body>
-        <header id="main-header">
+    <header id="main-header">
         <div class="logo">
             <a href="../index.html"><img src="../Assets/1.png" alt="mochi bakery and cafe white logo" width="100" height="auto"></a>
         </div>
@@ -31,8 +31,8 @@
         <div class="user-auth">
             <a href="login.html"><button>LOGIN / REGISTER</button></a>
             <a href="cart.html" class="cart-link">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span id="cart-item-count">0</span>
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-item-count">0</span>
             </a>
         </div>
         <!-----Display User Message------->
@@ -65,54 +65,71 @@
             </ul>
         </nav>
     </header>
+
     <main>
-    <section class="auth-container">
-        <h2>Welcome Back</h2>
-        
-        <form id="login-form">
-            <label for="login-username">Username or Email:</label>
-            <input type="text" id="login-username" required>
+        <section class="auth-container">
+            <h2>Welcome Back</h2>
             
-            <label for="login-password">Password:</label>
-            <input type="password" id="login-password" required>
+            <form id="login-form">
+                <label for="login-trn">TRN (Tax Registration Number):</label>
+                <input type="text" id="login-trn" 
+                       pattern="\d{3}-\d{3}-\d{3}" 
+                       placeholder="000-000-000" 
+                       title="Format: 000-000-000" 
+                       required>
+                
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" required>
+                
+                <button type="submit" class="cta-button">Log In</button>
+            </form>
             
-            <button type="submit" class="cta-button">Log In</button>
-        </form>
-        <p>New customer? <a href="registration.html">Register here</a></p>
-    </section>
-        </main>
-            <footer id="main-footer">
-            <div class="footer-content-wrapper">
-                <div class="footer-brand-logo">
-                    <img src="Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo">
-                    <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
-                </div>
+            <p>New customer? <a href="registration.html">Register here</a></p>
+            <p><a href="#" onclick="resetPassword()">Forgot your password?</a></p>
+        </section>
+    </main>
 
-                <div class="footer-nav-links">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="../index.html">Home</a></li>
-                        <li><a href="products.html">Products</a></li>
-                        <li><a href="about_us.html">About Us</a></li>
-                        <li><a href="contact_us.html">Contact Us</a></li>
-                        <li><a href="registration.html">Get Started</a></li>
-                    </ul>
-                </div>
-                <div class="footer-contact-social">
-                    <h3>Get In Touch</h3>
-                        <p>Email:<a href="mailto:info@mochibakerycafe.com"> info@mochibakerycafe.com</a></p>
-                        <p>Phone: +1 678 555-MOCHI </p>
-                </div>
-
-                <div class="social-icons">
-                    <a href="#" aria-label="Find us on Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
-                </div>
-                </div>
+    <footer id="main-footer">
+        <div class="footer-content-wrapper">
+            <div class="footer-brand-logo">
+                <img src="../Assets/3.png" alt="Mochi bakery and cafe logo" class="footer-logo">
+                <p>&copy;<span id="current-year">2025</span> Mochi Bakery & Cafe. All Rights Reserved.</p>
             </div>
-        </footer>
-<script src="../script.js"></script>
+
+            <div class="footer-nav-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about_us.html">About Us</a></li>
+                    <li><a href="contact_us.html">Contact Us</a></li>
+                    <li><a href="registration.html">Get Started</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-contact-social">
+                <h3>Get In Touch</h3>
+                <p>Email: <a href="mailto:info@mochibakerycafe.com">info@mochibakerycafe.com</a></p>
+                <p>Phone: +1 678 555-MOCHI</p>
+            </div>
+
+            <div class="social-icons">
+                <a href="#" aria-label="Find us on Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    
+    <script>
+        function resetPassword() {
+            const trn = prompt('Enter your TRN to reset password:');
+            if (trn) {
+                alert('Password reset instructions have been sent to your registered email.');
+            }
+        }
+    </script>
 </body>
 </html>
-

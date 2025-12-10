@@ -2,134 +2,187 @@
 /* Purpose: To open and close the mobile navigation menu on click. */
 /* Creator: Tiffany Maragh 1705946 */
 
-
-const menuToggleButton = document.getElementById('mobile-menu-toggle'); 
-const mobileMenu = document.getElementById('mobile-nav-menu'); 
+const menuToggleButton = document.getElementById('mobile-menu-toggle');
+const mobileMenu = document.getElementById('mobile-nav-menu');
 
 function toggleMobileMenu() {
-    mobileMenu.classList.toggle('active');
-    
+    if (!menuToggleButton || !mobileMenu) return;
 
+    // Toggle visual state
+    const opening = !mobileMenu.classList.contains('active');
+    mobileMenu.classList.toggle('active', opening);
+
+    // Update icon and aria label
     const icon = menuToggleButton.querySelector('i');
-    if (mobileMenu.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-xmark');
-        menuToggleButton.setAttribute('aria-label', 'Close Menu');
-    } else {
-        icon.classList.remove('fa-xmark');
-        icon.classList.add('fa-bars');
-        menuToggleButton.setAttribute('aria-label', 'Open Menu');
+    if (icon) {
+        icon.classList.toggle('fa-bars', !opening);
+        icon.classList.toggle('fa-xmark', opening);
     }
+    menuToggleButton.setAttribute('aria-label', opening ? 'Close Menu' : 'Open Menu');
 }
 
-// 3. Attach the event listener to the button
-if (menuToggleButton) { 
+if (menuToggleButton) {
     menuToggleButton.addEventListener('click', toggleMobileMenu);
 }
 
+/* IA#2: User Authentication - Login Function */
+/* Purpose: Handle user login with TRN authentication for invoice system */
+/* Modified by: Jamarie McGlashen (2408376) - Added TRN support for invoices */
 function handleLogin(event) {
-    // Prevent the form from submitting normally (reloading the page)
     event.preventDefault();
 
-    // Define the specific, single set of credentials for demonstration
-    const VALID_USERNAME = 'MochiLover';
-    const VALID_PASSWORD = 'password123';
+    const trnInput = document.getElementById('login-trn')?.value.trim();
+    const passwordInput = document.getElementById('login-password').value;
 
-    // 1. Get input values (DOM Manipulation)
-    const usernameInput = document.getElementById('login-username').value.trim();
-    const passwordInput = document.getElementById('login-password').value.trim();
+    // Load attempts counter (use sessionStorage for current session counter)
+    let loginAttempts = parseInt(sessionStorage.getItem('loginAttempts')) || 0;
+    const MAX_ATTEMPTS = 3; 
 
-    // --- Start: Authentication Check (Control Structures) ---
-    // Check if the input matches the hardcoded values
-    if (usernameInput === VALID_USERNAME && passwordInput === VALID_PASSWORD) {
+    // --- 1. CHECK LOCKOUT STATUS ---
+    if (loginAttempts >= MAX_ATTEMPTS) {
+        alert("Account locked. You have exceeded the maximum login attempts.");
+        window.location.href = 'error-account-locked.html'; // Redirect on final failure [cite: 30]
+        return;
+    }
 
+    // --- 2. ADMIN LOGIN ---
+    if (trnInput === '999-999-999' && passwordInput === 'Admin123!') {
+        sessionStorage.removeItem('loginAttempts'); 
+        localStorage.setItem('currentUser', 'Administrator');
+        localStorage.setItem('currentUserTRN', '999-999-999');
+        localStorage.setItem('isAdmin', 'true');
+        updateHeaderWelcomeMessage();
+        alert('Admin Login Successful! Welcome Administrator');
+        window.location.href = 'Admin_dash.html'; 
+        return;
+    }
+
+    // --- 3. USER AUTHENTICATION ---
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+    // User login is based on TRN and password [cite: 27]
+    const user = registeredUsers.find(u => u.trn === trnInput && u.password === passwordInput);
+
+    if (user) {
         // --- SUCCESS ---
-        // 2. Store User Session Data (Local Storage)
-        localStorage.setItem('currentUser', usernameInput);
+        sessionStorage.removeItem('loginAttempts'); // Clear attempts
 
-        // 3. Update UI (DOM Manipulation)
-        // Ensure the path to index.html is correct.
-        updateHeaderWelcomeMessage(usernameInput);
-
-        // 4. Redirect to the homepage
-        alert('Login Successful! Welcome ' + usernameInput);
-        window.location.href = '../index.html'; 
+        localStorage.setItem('currentUser', `${user.firstName} ${user.lastName}`);
+        localStorage.setItem('currentUserTRN', user.trn);
+        localStorage.setItem('isAdmin', 'false');
+        
+        updateHeaderWelcomeMessage();
+        alert('Login Successful! Welcome ' + user.firstName);
+        window.location.href = '../index.html'; // Redirect to homepage/products [cite: 30]
 
     } else {
-
         // --- FAILURE ---
-        // Provide feedback for failed login attempt (DOM Update)
-        alert('Login Failed: Incorrect username or password.');
+        loginAttempts++;
+        sessionStorage.setItem('loginAttempts', loginAttempts); // Increment and store new attempt count 
 
-        // Optional: Clear the password field after failure
-        document.getElementById('login-password').value = '';
+        const remaining = MAX_ATTEMPTS - loginAttempts;
+
+        if (remaining > 0) {
+            alert(`Login Failed: Incorrect TRN or password. ${remaining} attempts remaining.`);
+        } else {
+            alert("Login Failed. Maximum attempts exceeded. Account locked.");
+            window.location.href = 'error-account-locked.html'; // Redirect on final failure [cite: 30]
+        }
+        
+        const pwdEl = document.getElementById('login-password');
+        if (pwdEl) pwdEl.value = '';
     }
 }
-
 
 /* Helper function to check login status and update ALL pages */
-function updateHeaderWelcomeMessage(username) {
+function updateHeaderWelcomeMessage(username = null) {
     const welcomeHeader = document.getElementById('welcome-message-header');
+    const userAuthDiv = document.querySelector('.user-auth');
+
+    // If no username provided, check localStorage
+    if (!username) {
+        username = localStorage.getItem('currentUser');
+    }
 
     if (username && welcomeHeader) {
-        // Change the text content to display the username
         welcomeHeader.textContent = `Welcome Back, ${username}!`;
+        welcomeHeader.style.display = 'inline-block';
 
-        // Hide the Login/Register buttons/links (DOM Manipulation)
-        const userAuthDiv = document.querySelector('.user-auth');
-        if (userAuthDiv) {
-            userAuthDiv.style.display = 'none';
-        }
+        if (userAuthDiv) userAuthDiv.style.display = 'none';
+
+        // Add logout button
+        addLogoutButton();
+    } else {
+        // User not logged in
+        if (welcomeHeader) welcomeHeader.style.display = 'none';
+        if (userAuthDiv) userAuthDiv.style.display = 'flex';
+
+        // Remove logout button
+        removeLogoutButton();
     }
 }
 
-// 5. Check login status when ANY page loads
-// This ensures "Welcome Back" shows up even on the homepage after login
-document.addEventListener('DOMContentLoaded', () => {
-    const storedUsername = localStorage.getItem('currentUser');
-    if (storedUsername) {
-        updateHeaderWelcomeMessage(storedUsername);
-    }
-});
-
-/*       Event Listener for Login Form */
+/* Event Listener for Login Form */
 const loginForm = document.getElementById('login-form');
-
 if (loginForm) {
-    // Event Handling: Listens for the 'submit' action on the form
     loginForm.addEventListener('submit', handleLogin);
 }
 
 /* User-Defined Function - saveRegistrationData() */
 /* Purpose: Stores a new user's complete registration data in local storage. */
+/* Modified by: Jamarie McGlashen (2408376) - Added RegistrationData for invoices */
 /* Creator: Tiffany Maragh 1705946 */
-function saveRegistrationData(userData){
-    // Retrieve existing registration data or initialize an empty array
-    let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-    // Add the new user's data to the array
+function saveRegistrationData(userData) {
+    // Save to registeredUsers
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
     registeredUsers.push(userData);
-    // Save the updated array back to local storage
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+    // ============================================
+    // ADDED FOR INVOICE SYSTEM: Save to RegistrationData
+    // ============================================
+    const registrationData = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+
+    const invoiceUser = {
+        trn: userData.trn,
+        password: userData.password,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        dob: userData.dob,
+        gender: userData.gender,
+        phone: userData.phone,
+        email: userData.email,
+        dateRegistered: new Date().toLocaleDateString(),
+        cart: [],
+        invoices: [] // Empty array for future invoices
+    };
+
+    registrationData.push(invoiceUser);
+    localStorage.setItem('RegistrationData', JSON.stringify(registrationData));
+    // ============================================
+
     console.log("User registered:", userData.email, "Total registered users:", registeredUsers.length);
-
 }
-
+/* User-Defined Function - handleRegistrationSubmit() */
+/* Purpose: Handles the registration form submission event. */
+/* Creator: Tiffany Maragh 1705946 */ 
+function handleRegistrationSubmit(event) {
+    event.preventDefault(); // CRITICAL: Stop the browser from refreshing!
+    validateForm(); 
+}
 /* User-Defined Function - validateForm() */
 /* Purpose: Performs comprehensive client-side validation for all registration fields. */
 /* Creator: Tiffany Maragh 1705946 */
-
 function validateForm() {
-    let isValid = true; // Flag to track overall form validity
-    // Helper to get element and clear previous error message
+    let isValid = true;
     const getField = (id) => document.getElementById(id);
     const clearError = (id) => {
         const span = document.getElementById(id);
         if (span) span.textContent = '';
     };
-    // Clear all previous error messages
-    ['first-name-error', 'last-name-error', 'username-error', 'email-error',  'password-error', 'confirm-password-error', 'trn-error', 'phone-error', 'dob-error', 'gender-error' ].forEach(clearError);
 
-    //Get form field values
+    ['first-name-error', 'last-name-error', 'username-error', 'email-error', 'password-error',
+        'confirm-password-error', 'trn-error', 'phone-error', 'dob-error', 'gender-error'].forEach(clearError);
+
     const firstName = getField('reg-first-name').value.trim();
     const lastName = getField('reg-last-name').value.trim();
     const username = getField('reg-username').value.trim();
@@ -139,14 +192,14 @@ function validateForm() {
     const trn = getField('reg-trn').value.trim();
     const phone = getField('reg-phone').value.trim();
     const dob = getField('reg-dob').value;
-    const gender = getField('reg-gender').value;   
+    const gender = getField('reg-gender').value;
 
-    // Validation Checks for Each Field
-    if (firstName === '') { 
+    // Validation checks (same as original)
+    if (firstName === '') {
         getField('first-name-error').textContent = 'First Name is required.';
         isValid = false;
     }
-    if (lastName === '') { 
+    if (lastName === '') {
         getField('last-name-error').textContent = 'Last Name is required.';
         isValid = false;
     }
@@ -157,14 +210,16 @@ function validateForm() {
         getField('username-error').textContent = 'Username must be at least 5 characters.';
         isValid = false;
     }
+
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email === '') {
         getField('email-error').textContent = 'Email is required.';
         isValid = false;
-    }   else if (!regexEmail.test(email)) {
+    } else if (!regexEmail.test(email)) {
         getField('email-error').textContent = 'Invalid email format.';
         isValid = false;
     }
+
     if (password === '') {
         getField('password-error').textContent = 'Password is required.';
         isValid = false;
@@ -172,13 +227,13 @@ function validateForm() {
         getField('password-error').textContent = 'Password must be at least 8 characters.';
         isValid = false;
     }
-    // Add more password complexity checks (e.g., uppercase, lowercase, number, special character)
+
     const passwordComplexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordComplexityRegex.test(password)) {
         getField('password-error').textContent = "Password needs 1 uppercase, 1 lowercase, 1 number, 1 special character.";
         isValid = false;
     }
-    //confirm password check
+
     if (password === '') {
         getField('confirm-password-error').textContent = 'Please confirm your password.';
         isValid = false;
@@ -186,6 +241,7 @@ function validateForm() {
         getField('confirm-password-error').textContent = 'Passwords do not match.';
         isValid = false;
     }
+
     const regexTRN = /^\d{3}-\d{3}-\d{3}$/;
     if (trn === '') {
         getField('trn-error').textContent = 'TRN is required.';
@@ -193,15 +249,15 @@ function validateForm() {
     } else if (!regexTRN.test(trn)) {
         getField('trn-error').textContent = 'TRN must be exactly 9 digits in format 000-000-000.';
         isValid = false;
-    } else { //check for duplicate TRN in system to prevent multiple registrations
+    } else {
         let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
         if (registeredUsers.some(user => user.trn === trn)) {
             getField('trn-error').textContent = 'This TRN is already registered.';
             isValid = false;
         }
     }
-    //phone number 
-    const regexPhone = /^(876)-\d{3}-\d{4}$/; // Example: 876-XXX-XXXX
+
+    const regexPhone = /^(876)-\d{3}-\d{4}$/;
     if (phone === '') {
         getField('phone-error').textContent = 'Phone Number is required.';
         isValid = false;
@@ -209,11 +265,11 @@ function validateForm() {
         getField('phone-error').textContent = 'Phone Number must be in format 876-XXX-XXXX.';
         isValid = false;
     }
-    //date of birth where the age must be at least 18
+
     if (dob === '') {
         getField('dob-error').textContent = 'Date of Birth is required.';
         isValid = false;
-    } else {    
+    } else {
         const birthDate = new Date(dob);
         const today = new Date();
         let age = today.getFullYear() - birthDate.getFullYear();
@@ -226,40 +282,38 @@ function validateForm() {
             isValid = false;
         }
     }
-    //gender
-    if (gender === '') {            
+
+    if (gender === '') {
         getField('gender-error').textContent = 'Please select a gender.';
         isValid = false;
     }
-    // After all validations, if valid, save the data
+
     if (isValid) {
         const userData = {
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        password: password,
-        trn: trn,
-        phone: phone,
-        dob: dob,
-        gender: gender,
-        registeredAt: new Date().toISOString()
+            firstName: firstName,
+            lastName: lastName,
+            username: username,
+            email: email,
+            password: password,
+            trn: trn,
+            phone: phone,
+            dob: dob,
+            gender: gender,
+            registeredAt: new Date().toISOString()
         };
-        saveRegistrationData(userData); //Saves the user data to local storage
+        saveRegistrationData(userData);
         alert('Registration Successful! You can now log in.');
-        window.location.href = './login.html'; //redirect to login page after successful registration
+        window.location.href = './login.html';
         return;
     }
-    return false; // prevent form submission due to validation errors
+    return false;
 }
 
-/* IA#2 Group Project: Event Handling - handleCancelRegistration() 
-    Purpose: Handles the cancellation of the registration process.*/
-function handleCancelRegistration() {   
+/* IA#2 Group Project: Event Handling - handleCancelRegistration() */
+function handleCancelRegistration() {
     const confirmation = confirm("Are you sure you want to cancel your registration? All entered data will be lost.");
     if (confirmation) {
-        // Redirect to the homepage or products page
-        window.location.href = '../index.html'; 
+        window.location.href = '../index.html';
     }
 }
 
@@ -276,9 +330,8 @@ function handleCancelRegistration() {
 
 /* ============================
    PRODUCT LIST & ADD TO CART
-  Dhi-andra Neath
+   Dhi-andra Neath
 ============================ */
-
 const products = [
     { id: 'M001', name: 'Strawberry Daifuku', price: 3.99, description: 'Pink strawberry mochi dessert.', image: '../Assets/Strawberry Cheesecake Mochi.png', category: 'mochi' },
     { id: 'M002', name: 'Matcha Cheesecake', price: 4.99, description: 'Creamy classic cheesecake with Japanese matcha.', image: '../Assets/matchaCheesecake.png', category: 'mochi' },
@@ -294,17 +347,12 @@ const products = [
     { id: 'D008', name: 'Yuzu Refresher', price: 6.00, description: 'Vibrant yuzu sparkling drink.', image: '../Assets/yuzu_drink.png', category: 'drink' },
 ];
 
-// Save products to localStorage if not already
 if (!localStorage.getItem('AllProducts')) {
     localStorage.setItem('AllProducts', JSON.stringify(products));
 }
 
-// Load products
-const allProducts = JSON.parse(localStorage.getItem('AllProducts'));
+const allProducts = JSON.parse(localStorage.getItem('AllProducts')) || [];
 
-// ============================
-// Display Products
-// ============================
 function displayProducts() {
     const containers = {
         mochi: document.getElementById("mochi-products"),
@@ -326,47 +374,80 @@ function displayProducts() {
             <p class="product-price">$${product.price.toFixed(2)}</p>
             <button class="add-to-cart-button" onclick="addItemToCart('${product.id}', '${product.name}', ${product.price})">Add to Cart</button>
         `;
-
-        containers[product.category].appendChild(div);
+        const target = containers[product.category];
+        if (target) target.appendChild(div);
     });
 }
 
-// Call displayProducts after DOM is loaded
-document.addEventListener('DOMContentLoaded', displayProducts);
-
 /* IA#2: User-Defined Function - updateCartItemCount() */
-/* Purpose: To update the cart item count displayed in the header based on Local Storage data. */
 /* Creator: Tiffany Maragh 1705946 */
 function updateCartItemCount() {
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    
-    // Update all count spans
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+
     const countSpans = document.querySelectorAll('#cart-item-count, #cart-item-count-mobile');
     countSpans.forEach(span => {
         span.textContent = totalCount;
-        // Show/hide the counter bubble based on the count
         span.style.display = totalCount > 0 ? 'inline-block' : 'none';
     });
 }
 
-// Call updateCartItemCount on page load
-document.addEventListener('DOMContentLoaded', updateCartItemCount);
+document.addEventListener('DOMContentLoaded', function () {
+    
+    // --- 1. HEADER & AUTHENTICATION SETUP ---
+    checkLoginStatus(); 
+    updateHeaderWelcomeMessage();
+    updateCartItemCount(); 
+    
+    // --- 2. REGISTRATION FORM SUBMISSION FIX (CRITICAL) ---
+    // Attaches the handler to prevent the default form submission and control the redirect.
+    const registrationForm = document.getElementById('registration-form');
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', handleRegistrationSubmit);
+    }
+    
+    // ATTACHMENT FOR CANCEL BUTTONS
+    const cancelRegButton = document.getElementById('cancel-reg-button');
+    if (cancelRegButton) {
+        cancelRegButton.addEventListener('click', handleCancelRegistration);
+    }
+    
+    // --- 3. PAGE CONTENT SETUP ---
+    displayProducts(); // Displays products on the product pages.
+    
+    // INVOICE PAGE SETUP
+    if (window.location.pathname.includes('invoice.html')) {
+        displayInvoice();
+    }
+    
+    // CHECKOUT PAGE SETUP
+    if (document.querySelector('.checkout-page-container')) {
+        displayCheckoutSummary();
+        attachCartItemListeners(); // Attach listeners for any cart controls rendered on checkout
+    }
+    
+    // CHECKOUT/ORDER CANCELLATION
+    const cancelButton = document.getElementById('cancel-button'); // Assumed Checkout Cancel
+    if (cancelButton) {
+        cancelButton.addEventListener('click', handleCancelOrder);
+    }
+
+    const confirmForm = document.getElementById('shipping-form');
+    if (confirmForm) {
+        confirmForm.addEventListener('submit', handleConfirmOrder);
+    }
+});
+
 
 /* IA#2: User-Defined Function - addItemToCart() */
-/* Purpose: To dynamically add a new product item to the shopping cart array and update the view. */
 /* Creator: Tiffany Maragh 1705946 */
 function addItemToCart(productId, productName, price, quantity = 1) {
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    
-    // 1. Check if item exists (Control Structure)
-    let itemFound = cart.find(item => item.id === productId);
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
-    if (itemFound) {
-        // If item exists, increase quantity
-        itemFound.quantity += quantity;
+    const idx = cart.findIndex(item => item.id === productId);
+    if (idx !== -1) {
+        cart[idx].quantity = (cart[idx].quantity || 0) + quantity;
     } else {
-        // If item is new, add it to the cart array
         cart.push({
             id: productId,
             name: productName,
@@ -375,40 +456,35 @@ function addItemToCart(productId, productName, price, quantity = 1) {
         });
     }
 
-    // 2. Save the updated cart back to Local Storage
     localStorage.setItem('shoppingCart', JSON.stringify(cart));
-    
-    // 3. Update the item count in the header
     updateCartItemCount();
-
-    // 4. Update the sidebar view and open it (DOM Manipulation)
-    renderCartItems(); 
-    openCartSidebar(); 
+    renderCartItems();
+    openCartSidebar();
 }
 
 /* IA#2: User-Defined Function - renderCartItems() */
-/* Purpose: To dynamically populate the Cart Sidebar with items from Local Storage. */
 /* Creator: Tiffany Maragh 1705946 */
 function renderCartItems() {
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     const itemListDiv = document.getElementById('cart-items-list');
     const emptyMessage = document.getElementById('cart-empty-message');
 
-    // Clear existing content
-    itemListDiv.innerHTML = ''; 
+    if (!itemListDiv || !emptyMessage) return;
+
+    itemListDiv.innerHTML = '';
 
     if (cart.length === 0) {
-        emptyMessage.style.display = 'block'; // Show empty message
-        updateCartTotal(); // Update totals to $0.00
+        emptyMessage.style.display = 'block';
+        updateCartTotal();
         return;
     }
 
-    emptyMessage.style.display = 'none'; // Hide empty message
+    emptyMessage.style.display = 'none';
 
-    // Loop through the cart array and build HTML for each item
     cart.forEach(item => {
-        const itemDiv = document.createElement('div'); // Create a new <div> element
+        const itemDiv = document.createElement('div');
         itemDiv.classList.add('cart-item');
+
         itemDiv.innerHTML = `
             <p class="item-name">${item.name}</p>
             <div class="item-controls">
@@ -419,126 +495,133 @@ function renderCartItems() {
                 <button class="remove-btn" data-id="${item.id}">Remove</button>
             </div>
         `;
-        itemListDiv.appendChild(itemDiv); // Add the new item HTML to the list container
+        itemListDiv.appendChild(itemDiv);
     });
-    
-    // Call the function to calculate and update totals
+
     updateCartTotal();
-    
-    // Attach event listeners to the new quantity/remove buttons after rendering
-    attachCartItemListeners(); 
+    attachCartItemListeners();
 }
-// Function to calculate and update cart totals
+
 /* IA#2: User-Defined Function - updateCartTotal() */
-/* Purpose: To recalculate the sub-total, tax, discount, and the final total on the cart page. */
 /* Creator: Tiffany Maragh 1705946 */
 function updateCartTotal() {
-    // Define constants for calculations
-    const TAX_RATE = 0.15; // 15% Tax (Assignment context)
-    const DISCOUNT_PERCENT = 0.10; // 10% Discount (Assignment context)
-    
-    // 1. Load the cart
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    
+    const TAX_RATE = 0.15;
+    const DISCOUNT_PERCENT = 0.10;
+
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let subTotal = 0;
 
-    // 2. Calculate Sub-Total (Control Structure: loop through items)
     cart.forEach(item => {
-        // Correct arithmetic calculation
-        subTotal += item.price * item.quantity; 
+        subTotal += (item.price * item.quantity) || 0;
     });
 
-    // 3. Apply Discount and Tax Calculations (Arithmetic)
     const discountAmount = subTotal * DISCOUNT_PERCENT;
     const totalBeforeTax = subTotal - discountAmount;
     const taxAmount = totalBeforeTax * TAX_RATE;
     const finalTotal = totalBeforeTax + taxAmount;
-    
-    // 4. Round values for currency display
+
     const format = (num) => num.toFixed(2);
 
-    // 5. Update the DOM in the Cart Sidebar (DOM Manipulation)
     const subtotalEl = document.getElementById('cart-subtotal');
     const discountEl = document.getElementById('cart-discount');
     const taxEl = document.getElementById('cart-tax');
     const totalEl = document.getElementById('cart-total');
-    
-    if (subtotalEl) { // Check if elements exist before updating
+
+    if (subtotalEl) {
         subtotalEl.textContent = `$${format(subTotal)}`;
-        discountEl.textContent = `-$${format(discountAmount)}`;
-        taxEl.textContent = `$${format(taxAmount)}`;
-        totalEl.textContent = `$${format(finalTotal)}`;
+        if (discountEl) discountEl.textContent = `-$${format(discountAmount)}`;
+        if (taxEl) taxEl.textContent = `$${format(taxAmount)}`;
+        if (totalEl) totalEl.textContent = `$${format(finalTotal)}`;
     }
-    // Return the calculated values 
-    return { 
-        subTotal: subTotal, 
+
+    return {
+        subTotal: subTotal,
         discountAmount: discountAmount,
         taxAmount: taxAmount,
-        finalTotal: finalTotal 
+        finalTotal: finalTotal
     };
 }
 
-// Function to attach event listeners to cart item buttons
 /* IA#2: Event Handling - Item Controls (Remove/Quantity) */
-/* Purpose: Attaches click listeners to dynamically created cart item buttons. */
 /* Creator: Tiffany Maragh 1705946 */
 function attachCartItemListeners() {
-    // Get all dynamically generated buttons
-    const removeButtons = document.querySelectorAll('.remove-btn');
-    const increaseButtons = document.querySelectorAll('.quantity-btn.increase');
-    const decreaseButtons = document.querySelectorAll('.quantity-btn.decrease');
-    
-    // Attach remove listeners
+    const removeButtons = Array.from(document.querySelectorAll('.remove-btn'));
+    const increaseButtons = Array.from(document.querySelectorAll('.quantity-btn.increase'));
+    const decreaseButtons = Array.from(document.querySelectorAll('.quantity-btn.decrease'));
+
     removeButtons.forEach(button => {
+        button.removeEventListener('click', handleRemoveItem);
         button.addEventListener('click', handleRemoveItem);
     });
-    
-    // Attach quantity change listeners
+
     increaseButtons.forEach(button => {
+        button.removeEventListener('click', handleQuantityChange);
         button.addEventListener('click', handleQuantityChange);
     });
+
     decreaseButtons.forEach(button => {
+        button.removeEventListener('click', handleQuantityChange);
         button.addEventListener('click', handleQuantityChange);
     });
-    
-    // Attach Clear All listener
+
     const clearButton = document.getElementById('clear-cart-button');
     if (clearButton) {
+        clearButton.removeEventListener('click', handleClearCart);
         clearButton.addEventListener('click', handleClearCart);
     }
+
+    // Also attach change listeners to numeric inputs (in case user edits quantity)
+    const quantityInputs = Array.from(document.querySelectorAll('.item-quantity'));
+    quantityInputs.forEach(input => {
+        input.removeEventListener('change', handleQuantityInputChange);
+        input.addEventListener('change', handleQuantityInputChange);
+    });
 }
 
-// Handler function definitions
 function handleQuantityChange(event) {
     const productId = event.target.dataset.id;
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    let item = cart.find(i => i.id === productId);
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const item = cart.find(i => i.id === productId);
 
-    if (item) {
-        if (event.target.classList.contains('increase')) {
-            item.quantity++;
-        } else if (event.target.classList.contains('decrease') && item.quantity > 1) {
-            item.quantity--;
-        }
+    if (!item) return;
+
+    if (event.target.classList.contains('increase')) {
+        item.quantity = (item.quantity || 0) + 1;
+    } else if (event.target.classList.contains('decrease') && item.quantity > 1) {
+        item.quantity = item.quantity - 1;
     }
-    
+
     localStorage.setItem('shoppingCart', JSON.stringify(cart));
-    renderCartItems(); // Re-render the cart list
+    renderCartItems();
+}
+
+function handleQuantityInputChange(event) {
+    const productId = event.target.dataset.id;
+    const newVal = parseInt(event.target.value, 10);
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const item = cart.find(i => i.id === productId);
+
+    if (!item) return;
+
+    if (isNaN(newVal) || newVal < 1) {
+        event.target.value = item.quantity;
+        return;
+    }
+
+    item.quantity = newVal;
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    renderCartItems();
 }
 
 function handleRemoveItem(event) {
     const productId = event.target.dataset.id;
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    
-    // Filter out the item to be removed
-    cart = cart.filter(item => item.id !== productId); 
-    
+    cart = cart.filter(item => item.id !== productId);
     localStorage.setItem('shoppingCart', JSON.stringify(cart));
-    renderCartItems(); // Re-render the cart list
+    renderCartItems();
 }
 
 function handleClearCart() {
-    // Clear the storage and update the view
     localStorage.removeItem('shoppingCart');
     updateCartItemCount();
     renderCartItems(); 
@@ -590,358 +673,408 @@ if (clearBtn) clearBtn.addEventListener('click', handleClearCart);
 });
 
 /* IA#2: Function - displayCheckoutSummary() */
-/* Purpose: Populates the item list and financial summary on checkout.html. */
 /* Creator: Tiffany Maragh 1705946 */
 function displayCheckoutSummary() {
-    // 1. Get the cart data and calculated totals
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-    
-    // Ensure updateCartTotal runs to get the latest totals and returns the raw numbers
-    // We modify updateCartTotal slightly to be runnable and return values if needed,
-    // but here we just rely on it updating the DOM elements with the IDs from checkout.html
-    updateCartTotal(); // This function already updates the Summary IDs if they exist
-    
-    // 2. Get the item list container
+    updateCartTotal();
+
     const checkoutItemList = document.getElementById('checkout-item-list');
     const amountPaidInput = document.getElementById('amount-paid');
-    
-    // Clear previous items
-    checkoutItemList.innerHTML = ''; 
+
+    if (!checkoutItemList) return;
+
+    checkoutItemList.innerHTML = '';
 
     if (cart.length === 0) {
         checkoutItemList.innerHTML = '<p class="text-center">Your cart is empty. Please return to the products page.</p>';
         return;
     }
 
-    let finalTotalValue = 0;
-    
-    // 3. Populate the itemized list
     cart.forEach(item => {
         const itemDiv = document.createElement('div');
         itemDiv.classList.add('summary-item');
-        
         const lineTotal = item.price * item.quantity;
         itemDiv.innerHTML = `
             <span>${item.name} x ${item.quantity}</span>
             <span>$${lineTotal.toFixed(2)}</span>
         `;
         checkoutItemList.appendChild(itemDiv);
-        finalTotalValue = finalTotalValue; // Just to ensure the variable is defined
     });
-    
-    // 4. Update the "Amount Being Paid" field with the final total
-    // Call updateCartTotal again to ensure we get the final value from the DOM or calculation
-    const totals = updateCartTotal(); // Assuming updateCartTotal returns an object with totals
-    
-    // If updateCartTotal returned the final total:
+
+    const totals = updateCartTotal();
     if (amountPaidInput && totals && totals.finalTotal) {
         amountPaidInput.value = `$${totals.finalTotal.toFixed(2)}`;
     }
-    
-    // If updateCartTotal does NOT return totals (check your previous code):
-    // const totalElement = document.getElementById('summary-total').textContent;
-    // if (amountPaidInput && totalElement) {
-    //     amountPaidInput.value = totalElement;
-    // }
 }
-/* IA#2: Checkout Page Event Listeners */
 
-// Run when the Checkout page is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Check if the required elements for checkout exist (prevents errors on other pages)
-    if (document.querySelector('.checkout-page-container')) {
-        // Populate the cart details
-        displayCheckoutSummary(); 
-        // Attach event listeners for cart item controls right after page load
-    // This makes sure the quantity +/- buttons are functional immediately
-        attachCartItemListeners();
-    }
-    
-    // Attach listener to the Cancel Order button
-    const cancelButton = document.getElementById('cancel-button');
-    if (cancelButton) {
-        cancelButton.addEventListener('click', handleCancelOrder);
-    }
-    
-    // Attach listener to the Confirm & Pay button
-    const confirmForm = document.getElementById('shipping-form');
-    if (confirmForm) {
-        confirmForm.addEventListener('submit', handleConfirmOrder);
-    }
-});
-
-/* Handler Functions */
 
 function handleCancelOrder() {
     const confirmation = confirm("Are you sure you want to cancel your order? Your cart will be cleared.");
     if (confirmation) {
-        // Clears the cart data and redirects to the products page
         localStorage.removeItem('shoppingCart');
         alert("Order canceled. Cart cleared.");
-        window.location.href = '../Codes/products.html'; 
+        window.location.href = '../Codes/products.html';
     }
 }
 
+/* GROUP PROJECT: INVOICE SYSTEM */
+/* Purpose: Generate, store, and display invoices */
+/* Creator: Jamarie McGlashen 2408376 */
+
+function generateInvoice(shippingInfo) {
+    const currentUser = localStorage.getItem('currentUserTRN');
+    if (!currentUser) {
+        alert('Error: No user logged in');
+        return null;
+    }
+
+    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    if (cart.length === 0) {
+        alert('Error: Cart is empty');
+        return null;
+    }
+
+    const totals = updateCartTotal();
+    const invoiceNumber = 'INV-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+    const invoice = {
+        invoiceNumber: invoiceNumber,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        customerTRN: currentUser,
+        shippingInfo: shippingInfo,
+        items: cart.map(item => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: parseFloat(item.price),
+            lineTotal: (item.price * item.quantity).toFixed(2)
+        })),
+        subtotal: totals.subTotal.toFixed(2),
+        discount: totals.discountAmount.toFixed(2),
+        tax: totals.taxAmount.toFixed(2),
+        total: totals.finalTotal.toFixed(2),
+        status: 'Paid'
+    };
+
+    // Store in AllInvoices
+    const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+    allInvoices.push(invoice);
+    localStorage.setItem('AllInvoices', JSON.stringify(allInvoices));
+
+    // Store in user's personal invoices
+    const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+    const userIndex = users.findIndex(user => user.trn === currentUser);
+
+    if (userIndex !== -1) {
+        if (!users[userIndex].invoices) users[userIndex].invoices = [];
+        users[userIndex].invoices.push(invoice);
+        localStorage.setItem('RegistrationData', JSON.stringify(users));
+    }
+
+    localStorage.removeItem('shoppingCart');
+    updateCartItemCount();
+    localStorage.setItem('lastInvoice', JSON.stringify(invoice));
+
+    return invoice;
+}
+
+function displayInvoice() {
+    const invoiceData = JSON.parse(localStorage.getItem('lastInvoice'));
+    const container = document.getElementById('invoice-content');
+
+    if (!container) return;
+    if (!invoiceData) {
+        container.innerHTML = '<p class="error">No invoice found.</p>';
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="invoice-header-info">
+            <h2>Mochi Bakery & Cafe</h2>
+            <p>Sweet Moments. Delivered.</p>
+            <p>Email: info@mochibakerycafe.com | Phone: +1 678 555-MOCHI</p>
+        </div>
+        
+        <div class="invoice-meta">
+            <div class="meta-left">
+                <p><strong>Invoice #:</strong> ${invoiceData.invoiceNumber}</p>
+                <p><strong>Date:</strong> ${invoiceData.date}</p>
+                <p><strong>Time:</strong> ${invoiceData.time}</p>
+            </div>
+            <div class="meta-right">
+                <p><strong>Customer TRN:</strong> ${invoiceData.customerTRN}</p>
+                <p><strong>Status:</strong> <span class="status-paid">${invoiceData.status}</span></p>
+            </div>
+        </div>
+        
+        <div class="shipping-details">
+            <h3><i class="fas fa-shipping-fast"></i> Shipping Information</h3>
+            <p><strong>${invoiceData.shippingInfo.name}</strong></p>
+            <p>${invoiceData.shippingInfo.address}</p>       
+        </div>
+        
+        <table class="invoice-items-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${invoiceData.items.map(item => `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>$${item.lineTotal}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        
+        <div class="invoice-summary">
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>$${invoiceData.subtotal}</span>
+            </div>
+            <div class="summary-row">
+                <span>Discount (10%):</span>
+                <span>-$${invoiceData.discount}</span>
+            </div>
+            <div class="summary-row">
+                <span>Tax (15%):</span>
+                <span>$${invoiceData.tax}</span>
+            </div>
+            <div class="summary-row grand-total">
+                <span><strong>TOTAL:</strong></span>
+                <span><strong>$${invoiceData.total}</strong></span>
+            </div>
+        </div>
+        
+        <div class="invoice-message">
+            <p><i class="fas fa-envelope"></i> Invoice has been sent to your registered email.</p>
+            <p class="thank-you">Thank you for your order!</p>
+        </div>
+    `;
+}
+
+function ShowInvoices() {
+    const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+
+    console.log('=== ALL INVOICES ===');
+    console.log(`Total invoices: ${allInvoices.length}`);
+
+    if (allInvoices.length === 0) {
+        console.log('No invoices found in the system.');
+        return { count: 0, invoices: [], message: 'No invoices found' };
+    }
+
+    allInvoices.forEach(invoice => {
+        console.log('------------------------');
+        console.log(`Invoice #: ${invoice.invoiceNumber}`);
+        console.log(`Date: ${invoice.date}`);
+        console.log(`Customer TRN: ${invoice.customerTRN}`);
+        console.log(`Total: $${invoice.total}`);
+    });
+
+    // Create a formatted display for the admin dashboard /Jamrie Mcglashen
+
+    let formattedInvoices = '';
+    allInvoices.forEach(invoice => {
+        formattedInvoices += `
+            <div class="invoice-item-display">
+                <p><strong>Invoice #:</strong> ${invoice.invoiceNumber}</p>
+                <p><strong>Date:</strong> ${invoice.date} ${invoice.time || ''}</p>
+                <p><strong>Customer TRN:</strong> ${invoice.customerTRN}</p>
+                <p><strong>Total:</strong> $${invoice.total}</p>
+                <p><strong>Status:</strong> ${invoice.status || 'Paid'}</p>
+                <hr>
+            </div>
+        `;
+    });
+
+    return {
+        count: allInvoices.length,
+        invoices: allInvoices,
+        formatted: formattedInvoices,
+        message: `Found ${allInvoices.length} invoice(s) in the system.`
+    };
+}
+
 function handleConfirmOrder(event) {
-    event.preventDefault(); // Stop form submission
-    
-    // Simple front-end validation check (Can be expanded with more logic)
-    const shippingName = document.getElementById('shipping-name').value.trim();
-    if (shippingName.length === 0) {
+    event.preventDefault();
+
+    const shippingInfo = {
+        name: document.getElementById('shipping-name').value.trim(),
+        address: document.getElementById('shipping-address').value.trim()
+    };
+
+    if (!shippingInfo.name) {
         alert("Please enter your Full Name for shipping.");
         return;
     }
 
-    alert("Order Confirmed! Thank you for purchasing from Mochi Bakery & Cafe.");
-    
-    // Final action: Clear cart and redirect to homepage
-    localStorage.removeItem('shoppingCart');
-    window.location.href = '../index.html'; 
-}
+    // Generate invoice
+    const invoice = generateInvoice(shippingInfo);
 
-/*GROUP PROJECT: INVOICE SYSTEM ,Purpose: Generate, store, and display invoices
-JAMARIE MCGLASHEN 
-2408376
-
-*/
-
-/* 
-Generates invoice after checkout and stores in localStorage
-*/
-function generateInvoice(shippingInfo) {
-// 1. Get current user TRN and cart
-const currentUser = localStorage.getItem('currentUserTRN'); // store TRN on login
-if (!currentUser) {
-    alert('Error: No user logged in');
-    return null;
-}
-
-const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-if (cart.length === 0) {
-    alert('Error: Cart is empty');
-    return null;
-}
-
-// 2. Calculate totals using existing function
-const totals = updateCartTotal();
-
-// 3. Generate unique invoice number
-const invoiceNumber = 'INV-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
-
-// 4. Create invoice object
-const invoice = {
-    invoiceNumber: invoiceNumber,
-    date: new Date().toLocaleDateString(),
-    time: new Date().toLocaleTimeString(),
-    customerTRN: currentUser,
-    shippingInfo: shippingInfo,
-    items: cart.map(item => ({
-        name: item.name,
-        quantity: item.quantity,
-        price: parseFloat(item.price),
-        lineTotal: (item.price * item.quantity).toFixed(2)
-    })),
-    subtotal: totals.subTotal.toFixed(2),
-    discount: totals.discountAmount.toFixed(2),
-    tax: totals.taxAmount.toFixed(2),
-    total: totals.finalTotal.toFixed(2),
-    status: 'Paid'
-};
-
-// 5. STORE INVOICE IN LOCALSTORAGE
-//Store in ALL Invoices 
-let allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
-allInvoices.push(invoice);
-localStorage.setItem('AllInvoices', JSON.stringify(allInvoices));
-
-// Store in user's personal invoices
-let users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
-const userIndex = users.findIndex(user => user.trn === currentUser);
-
-if (userIndex !== -1) {
-    if (!users[userIndex].invoices) {
-        users[userIndex].invoices = [];
+    if (invoice) {
+        // Redirect to invoice page
+        window.location.href = 'invoice.html';
+    } else {
+        alert('Error generating invoice. Please try again.');
     }
-    users[userIndex].invoices.push(invoice);
-    localStorage.setItem('RegistrationData', JSON.stringify(users));
-}
-
-// Clear cart after successful invoice
-localStorage.removeItem('shoppingCart');
-updateCartItemCount(); // Update cart counter
-
-//Store for display on invoice page
-localStorage.setItem('lastInvoice', JSON.stringify(invoice));
-
-return invoice;
 }
 
 
-function displayInvoice() {
-const invoiceData = JSON.parse(localStorage.getItem('lastInvoice'));
-const container = document.getElementById('invoice-content');
-
-if (!container) return; 
-if (!invoiceData) {
-    container.innerHTML = '<p class="error">No invoice found.</p>';
-    return;
-}
-
-container.innerHTML = `
-    <div class="invoice-header-info">
-        <h2>Mochi Bakery & Cafe</h2>
-        <p>Sweet Moments. Delivered.</p>
-        <p>Email: info@mochibakerycafe.com | Phone: +1 678 555-MOCHI</p>
-    </div>
-    
-    <div class="invoice-meta">
-        <div class="meta-left">
-            <p><strong>Invoice #:</strong> ${invoiceData.invoiceNumber}</p>
-            <p><strong>Date:</strong> ${invoiceData.date}</p>
-            <p><strong>Time:</strong> ${invoiceData.time}</p>
-        </div>
-        <div class="meta-right">
-            <p><strong>Customer TRN:</strong> ${invoiceData.customerTRN}</p>
-            <p><strong>Status:</strong> <span class="status-paid">${invoiceData.status}</span></p>
-        </div>
-    </div>
-    
-    <div class="shipping-details">
-        <h3><i class="fas fa-shipping-fast"></i> Shipping Information</h3>
-        <p><strong>${invoiceData.shippingInfo.name}</strong></p>
-        <p>${invoiceData.shippingInfo.address}</p>
-        <p>${invoiceData.shippingInfo.city}</p>
-        <p>Phone: ${invoiceData.shippingInfo.phone}</p>
-    </div>
-    
-    <table class="invoice-items-table">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${invoiceData.items.map(item => `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>${item.quantity}</td>
-                    <td>$${item.price.toFixed(2)}</td>
-                    <td>$${item.lineTotal}</td>
-                </tr>
-            `).join('')}
-        </tbody>
-    </table>
-    
-    <div class="invoice-summary">
-        <div class="summary-row">
-            <span>Subtotal:</span>
-            <span>$${invoiceData.subtotal}</span>
-        </div>
-        <div class="summary-row">
-            <span>Discount (10%):</span>
-            <span>-$${invoiceData.discount}</span>
-        </div>
-        <div class="summary-row">
-            <span>Tax (15%):</span>
-            <span>$${invoiceData.tax}</span>
-        </div>
-        <div class="summary-row grand-total">
-            <span><strong>TOTAL:</strong></span>
-            <span><strong>$${invoiceData.total}</strong></span>
-        </div>
-    </div>
-    
-    <div class="invoice-message">
-        <p><i class="fas fa-envelope"></i> Invoice has been sent to your registered email.</p>
-        <p class="thank-you">Thank you for your order!</p>
-    </div>
-`;
-}
-
-/* 
-Shows all invoices in console 
-*/
-function ShowInvoices() {
-const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
-
-console.log('=== ALL INVOICES ===');
-console.log(`Total invoices: ${allInvoices.length}`);
-
-allInvoices.forEach(invoice => {
-    console.log('------------------------');
-    console.log(`Invoice #: ${invoice.invoiceNumber}`);
-    console.log(`Date: ${invoice.date}`);
-    console.log(`Customer TRN: ${invoice.customerTRN}`);
-    console.log(`Total: $${invoice.total}`);
-});
-
-return allInvoices;
-}
-
-/* 
-Gets all invoices for specific user 
-*/
-function GetUserInvoices(trn) {
-const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
-const user = users.find(u => u.trn === trn);
-
-if (user && user.invoices) {
-    console.log(`=== INVOICES FOR TRN: ${trn} ===`);
-    console.log(`Total invoices: ${user.invoices.length}`);
-    
-    user.invoices.forEach(invoice => {
-        console.log(`- ${invoice.invoiceNumber}: $${invoice.total} (${invoice.date})`);
-    });
-    
-    return user.invoices;
-} else {
-    console.log(`No invoices found for TRN: ${trn}`);
-    return [];
-}
-}
-
-
-// Find existing function and update it
-function handleConfirmOrder(event) {
-event.preventDefault();
-
-// Get shipping info
-const shippingInfo = {
-    name: document.getElementById('shipping-name').value.trim(),
-    address: document.getElementById('shipping-address').value.trim(),
-    city: document.getElementById('shipping-city').value.trim(),
-    phone: document.getElementById('shipping-phone').value.trim()
-};
-
-// Validate
-if (!shippingInfo.name) {
-    alert("Please enter your Full Name for shipping.");
-    return;
-}
-
-// Generate invoice
-const invoice = generateInvoice(shippingInfo);
-
-if (invoice) {
-    // Redirect to invoice page
-    window.location.href = 'invoice.html';
-} else {
-    alert('Error generating invoice. Please try again.');
-}
-}
-
-// Make sure invoice displays when page loads
-document.addEventListener('DOMContentLoaded', function() {
-// Check if we're on invoice page
-if (window.location.pathname.includes('invoice.html')) {
-    displayInvoice();
-}
-});
-
-//  print function
 function printInvoice() {
-window.print();
+    window.print();
 }
+
+function ShowUserFrequency() {
+    const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+
+    console.log('=== USER FREQUENCY ANALYSIS ===');
+    console.log(`Total registered users: ${users.length}`);
+
+    // 1. Gender Frequency
+    const genderCount = { Male: 0, Female: 0, Other: 0 };
+
+    users.forEach(user => {
+        if (genderCount.hasOwnProperty(user.gender)) {
+            genderCount[user.gender]++;
+        } else {
+            genderCount.Other++;
+        }
+    });
+
+    console.log('\n--- GENDER DISTRIBUTION ---');
+    console.log(`Male: ${genderCount.Male} users`);
+    console.log(`Female: ${genderCount.Female} users`);
+    console.log(`Other: ${genderCount.Other} users`);
+
+    // 2. Age Group Frequency
+    const ageGroups = {
+        '18-25': 0,
+        '26-35': 0,
+        '36-50': 0,
+        '50+': 0
+    };
+
+    users.forEach(user => {
+        if (user.dob) {
+            const birthDate = new Date(user.dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            if (age >= 18 && age <= 25) {
+                ageGroups['18-25']++;
+            } else if (age >= 26 && age <= 35) {
+                ageGroups['26-35']++;
+            } else if (age >= 36 && age <= 50) {
+                ageGroups['36-50']++;
+            } else if (age > 50) {
+                ageGroups['50+']++;
+            }
+        }
+    });
+
+    console.log('\n--- AGE GROUP DISTRIBUTION ---');
+    console.log(`18-25: ${ageGroups['18-25']} users`);
+    console.log(`26-35: ${ageGroups['26-35']} users`);
+    console.log(`36-50: ${ageGroups['36-50']} users`);
+    console.log(`50+: ${ageGroups['50+']} users`);
+}
+
+function logout() {
+    // Clear all user session data
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUserTRN');
+    localStorage.removeItem('isAdmin');
+    localStorage.removeItem('lastInvoice');
+
+    alert('You have been logged out successfully.');
+
+    const currentPage = window.location.pathname;
+
+    if (currentPage.includes('admin_dashboard.html')) {
+        // From admin dashboard, go to login page
+        window.location.href = 'login.html';
+    } else if (currentPage.includes('Codes/')) {
+        window.location.href = '../index.html';
+    } else {
+        window.location.href = 'index.html';
+    }
+}
+
+/*
+   AUTO-HIDE LOGIN BUTTON WHEN LOGGED IN // Jaamarie Mcglashen
+*/
+function checkLoginStatus() {
+    const currentUser = localStorage.getItem('currentUser');
+    const welcomeHeader = document.getElementById('welcome-message-header');
+    const userAuthDiv = document.querySelector('.user-auth');
+    const loginButtons = document.querySelectorAll('a[href*="login.html"] button');
+
+    if (currentUser && welcomeHeader) {
+        // User is logged in
+        welcomeHeader.textContent = `Welcome Back, ${currentUser}!`;
+        welcomeHeader.style.display = 'inline-block';
+
+        // Hide login button if it exists
+        if (userAuthDiv) {
+            userAuthDiv.style.display = 'none';
+        }
+
+        // Hide all login buttons in navigation
+        loginButtons.forEach(button => {
+            button.style.display = 'none';
+        });
+
+        // Add logout button dynamically if not already there
+        addLogoutButton();
+    } else {
+
+        if (welcomeHeader) {
+            welcomeHeader.style.display = 'none';
+        }
+        if (userAuthDiv) {
+            userAuthDiv.style.display = 'flex';
+        }
+
+        // Remove logout button if exists
+        removeLogoutButton();
+    }
+}
+
+function addLogoutButton() {
+    // Check if logout button already exists
+    if (document.getElementById('logout-button')) return;
+
+    const userInfoDiv = document.querySelector('.user-info-display');
+    if (userInfoDiv) {
+        const logoutBtn = document.createElement('button');
+        logoutBtn.id = 'logout-button';
+        logoutBtn.className = 'logout-btn';
+        logoutBtn.textContent = 'Logout';
+        logoutBtn.onclick = logout;
+
+        
+        userInfoDiv.appendChild(document.createElement('br'));
+        userInfoDiv.appendChild(logoutBtn);
+    }
+}
+
+function removeLogoutButton() {
+    const logoutBtn = document.getElementById('logout-button');
+    if (logoutBtn) {
+        logoutBtn.remove();
+    }
+}
+
