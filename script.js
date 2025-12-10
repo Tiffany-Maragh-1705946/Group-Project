@@ -684,6 +684,9 @@ if (clearBtn) clearBtn.addEventListener('click', handleClearCart);
 
 /* IA#2: Function - displayCheckoutSummary() */
 /* Creator: Tiffany Maragh 1705946 */
+
+/*Group Project Question 4 Confirm Button & Cancel Button*/
+/*Allana Dunkley 2300290 */
 function displayCheckoutSummary() {
     const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     updateCartTotal();
@@ -723,7 +726,7 @@ function handleCancelOrder() {
     if (confirmation) {
         localStorage.removeItem('shoppingCart');
         alert("Order canceled. Cart cleared.");
-        window.location.href = '../Codes/products.html';
+        window.location.href = '../Codes/cart.html'; 
     }
 }
 
