@@ -357,6 +357,76 @@ const products = [
     { id: 'D008', name: 'Yuzu Refresher', price: 6.00, description: 'Vibrant yuzu sparkling drink.', image: '../Assets/yuzu_drink.png', category: 'drink' },
 ];
 
+/* Cart function */
+/*Eligio Ortiz*/
+/*24089990*/
+
+
+function getUserCartKey() {
+    const currentUserTRN = localStorage.getItem('currentUserTRN');
+    return currentUserTRN ? `shoppingCart_${currentUserTRN}` : 'shoppingCart_guest';
+}
+
+function saveUserCart(cart) {
+    const cartKey = getUserCartKey();
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+    console.log('Cart saved for user:', cartKey, 'Items:', cart.length);
+}
+
+function loadUserCart() {
+    try {
+        const cartKey = getUserCartKey();
+        const cartData = localStorage.getItem(cartKey);
+
+        if (!cartData) {
+            const emptyCart = [];
+            localStorage.setItem(cartKey, JSON.stringify(emptyCart));
+            console.log('Created new empty cart for:', cartKey);
+            return emptyCart;
+        }
+
+        const cart = JSON.parse(cartData);
+        console.log('Cart loaded from:', cartKey, 'Items:', cart.length);
+        return Array.isArray(cart) ? cart : [];
+    } catch (error) {
+        console.error('Error loading user cart:', error);
+        return [];
+    }
+}
+
+function initializeUserCart() {
+    if (!localStorage.getItem('currentUserTRN')) {
+        localStorage.setItem('currentUserTRN', 'guest');
+    }
+}
+
+function migrateGuestCart() {
+    const oldCartKey = 'shoppingCart';
+    const newCartKey = getUserCartKey();
+
+    const oldCartData = localStorage.getItem(oldCartKey);
+
+    if (oldCartData) {
+        const oldCart = JSON.parse(oldCartData);
+        if (Array.isArray(oldCart) && oldCart.length > 0) {
+            const currentCart = loadUserCart();
+
+            oldCart.forEach(oldItem => {
+                const existingIndex = currentCart.findIndex(item => item.id === oldItem.id);
+                if (existingIndex !== -1) {
+                    currentCart[existingIndex].quantity += oldItem.quantity || 1;
+                } else {
+                    currentCart.push(oldItem);
+                }
+            });
+
+            saveUserCart(currentCart);
+            localStorage.removeItem(oldCartKey);
+            console.log('Cart migrated successfully');
+        }
+    }
+}
+
 if (!localStorage.getItem('AllProducts')) {
     localStorage.setItem('AllProducts', JSON.stringify(products));
 }
@@ -392,7 +462,7 @@ function displayProducts() {
 /* IA#2: User-Defined Function - updateCartItemCount() */
 /* Creator: Tiffany Maragh 1705946 */
 function updateCartItemCount() {
-    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cart = loadUserCart(); // CHANGED
     const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
     const countSpans = document.querySelectorAll('#cart-item-count, #cart-item-count-mobile');
@@ -404,13 +474,16 @@ function updateCartItemCount() {
 
 document.addEventListener('DOMContentLoaded', function () {
     
+    // --- 0. INITIALIZE USER CART SYSTEM ---
+    initializeUserCart();
+    migrateGuestCart();
+    
     // --- 1. HEADER & AUTHENTICATION SETUP ---
     checkLoginStatus(); 
     updateHeaderWelcomeMessage();
     updateCartItemCount(); 
     
     // --- 2. REGISTRATION FORM SUBMISSION FIX (CRITICAL) ---
-    // Attaches the handler to prevent the default form submission and control the redirect.
     const registrationForm = document.getElementById('registration-form');
     if (registrationForm) {
         registrationForm.addEventListener('submit', handleRegistrationSubmit);
@@ -452,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function () {
 /* IA#2: User-Defined Function - addItemToCart() */
 /* Creator: Tiffany Maragh 1705946 */
 function addItemToCart(productId, productName, price, quantity = 1) {
-    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cart = loadUserCart(); // CHANGED
 
     const idx = cart.findIndex(item => item.id === productId);
     if (idx !== -1) {
@@ -466,16 +539,20 @@ function addItemToCart(productId, productName, price, quantity = 1) {
         });
     }
 
-    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    saveUserCart(cart); // CHANGED
     updateCartItemCount();
-    renderCartItems();
-    openCartSidebar();
+    
+    // Ask if user wants to go to cart
+    const goToCart = confirm(`${productName} added to cart!\n\nWould you like to view your cart now?`);
+    if (goToCart) {
+        window.location.href = 'cart.html';
+    }
 }
 
 /* IA#2: User-Defined Function - renderCartItems() */
 /* Creator: Tiffany Maragh 1705946 */
 function renderCartItems() {
-    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cart = loadUserCart(); // CHANGED
     const itemListDiv = document.getElementById('cart-items-list');
     const emptyMessage = document.getElementById('cart-empty-message');
 
@@ -518,7 +595,7 @@ function updateCartTotal() {
     const TAX_RATE = 0.15;
     const DISCOUNT_PERCENT = 0.10;
 
-    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cart = loadUserCart(); // CHANGED
     let subTotal = 0;
 
     cart.forEach(item => {
@@ -589,7 +666,7 @@ function attachCartItemListeners() {
 
 function handleQuantityChange(event) {
     const productId = event.target.dataset.id;
-    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cart = loadUserCart();
     const item = cart.find(i => i.id === productId);
 
     if (!item) return;
@@ -600,14 +677,35 @@ function handleQuantityChange(event) {
         item.quantity = item.quantity - 1;
     }
 
-    localStorage.setItem('shoppingCart', JSON.stringify(cart));
-    renderCartItems();
+    saveUserCart(cart);
+    
+    // Force immediate refresh of ALL cart displays
+    refreshCartDisplay();
+}
+
+// Refresh function
+function refreshCartDisplay() {
+    console.log('Refreshing cart display...');
+    
+    // 1. Update cart count in header
+    updateCartItemCount();
+    
+    // 2. If on cart page, refresh everything
+    if (document.querySelector('.cart-page-container')) {
+        renderCartItems(); // Re-render the items list
+        updateCartTotal(); // Update the totals
+    }
+    
+    // 3. If on checkout page, refresh summary
+    if (document.querySelector('.checkout-page-container')) {
+        displayCheckoutSummary();
+    }
 }
 
 function handleQuantityInputChange(event) {
     const productId = event.target.dataset.id;
     const newVal = parseInt(event.target.value, 10);
-    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cart = loadUserCart();
     const item = cart.find(i => i.id === productId);
 
     if (!item) return;
@@ -618,28 +716,26 @@ function handleQuantityInputChange(event) {
     }
 
     item.quantity = newVal;
-    localStorage.setItem('shoppingCart', JSON.stringify(cart));
-    renderCartItems();
+    saveUserCart(cart);
+    
+    refreshCartDisplay();
 }
 
 function handleRemoveItem(event) {
     const productId = event.target.dataset.id;
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    let cart = loadUserCart();
     cart = cart.filter(item => item.id !== productId);
-    localStorage.setItem('shoppingCart', JSON.stringify(cart));
-    renderCartItems();
+    saveUserCart(cart);
+    
+    refreshCartDisplay();
 }
 
 function handleClearCart() {
-    localStorage.removeItem('shoppingCart');
-    updateCartItemCount();
-    renderCartItems(); 
+    saveUserCart([]);
+
+    refreshCartDisplay();
+    
     alert('Your cart has been cleared!');
-// Finish clearing the cart
-localStorage.removeItem('shoppingCart');
-updateCartItemCount();
-renderCartItems(); 
-alert('Your cart has been cleared!');
 }
 
 /* DOM initialization for cart.html: wire up buttons and render the cart */
@@ -681,7 +777,7 @@ if (clearBtn) clearBtn.addEventListener('click', handleClearCart);
 /*Group Project Question 4 Confirm Button & Cancel Button*/
 /*Allana Dunkley 2300290 */
 function displayCheckoutSummary() {
-    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cart = loadUserCart(); // CHANGED
     updateCartTotal();
 
     const checkoutItemList = document.getElementById('checkout-item-list');
@@ -717,7 +813,7 @@ function displayCheckoutSummary() {
 function handleCancelOrder() {
     const confirmation = confirm("Are you sure you want to cancel your order? Your cart will be cleared.");
     if (confirmation) {
-        localStorage.removeItem('shoppingCart');
+        saveUserCart([]); // CHANGED
         alert("Order canceled. Cart cleared.");
         window.location.href = '../Codes/cart.html'; 
     }
@@ -734,7 +830,7 @@ function generateInvoice(shippingInfo) {
         return null;
     }
 
-    const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    const cart = loadUserCart(); // CHANGED
     if (cart.length === 0) {
         alert('Error: Cart is empty');
         return null;
@@ -777,7 +873,7 @@ function generateInvoice(shippingInfo) {
         localStorage.setItem('RegistrationData', JSON.stringify(users));
     }
 
-    localStorage.removeItem('shoppingCart');
+    saveUserCart([]); // CHANGED: Clear cart using saveUserCart
     updateCartItemCount();
     localStorage.setItem('lastInvoice', JSON.stringify(invoice));
 
@@ -1004,8 +1100,13 @@ function logout() {
     localStorage.removeItem('currentUserTRN');
     localStorage.removeItem('isAdmin');
     localStorage.removeItem('lastInvoice');
-    localStorage.removeItem('shoppingCart');
 
+    // Set back to guest
+    localStorage.setItem('currentUserTRN', 'guest');
+    
+    // Update cart display
+    updateCartItemCount();
+    
     alert('You have been logged out successfully.');
 
     const currentPage = window.location.pathname;
@@ -1019,7 +1120,6 @@ function logout() {
         window.location.href = 'index.html';
     }
 }
-
 /*
    AUTO-HIDE LOGIN BUTTON WHEN LOGGED IN // Jaamarie Mcglashen
 */
