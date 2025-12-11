@@ -551,9 +551,8 @@ function updateCartTotal() {
         finalTotal: finalTotal
     };
 }
-
-/* IA#2: Event Handling - Item Controls (Remove/Quantity) */
-/* Creator: Tiffany Maragh 1705946 */
+/*cart event listeners*/
+/*Eligio Ortiz - 2408990*/
 function attachCartItemListeners() {
     const removeButtons = Array.from(document.querySelectorAll('.remove-btn'));
     const increaseButtons = Array.from(document.querySelectorAll('.quantity-btn.increase'));
@@ -670,12 +669,6 @@ if (continueBtn) {
         window.location.href = 'products.html';
     });
 }
-
-// Open/close sidebar controls (if present in your DOM)
-const openCartBtn = document.getElementById('open-cart-button');
-const closeCartBtn = document.getElementById('close-cart-button');
-if (openCartBtn) openCartBtn.addEventListener('click', openCartSidebar);
-if (closeCartBtn) closeCartBtn.addEventListener('click', closeCartSidebar);
 
 // Ensure clear cart control (if outside attachCartItemListeners)
 const clearBtn = document.getElementById('clear-cart-button');
@@ -1011,6 +1004,7 @@ function logout() {
     localStorage.removeItem('currentUserTRN');
     localStorage.removeItem('isAdmin');
     localStorage.removeItem('lastInvoice');
+    localStorage.removeItem('shoppingCart');
 
     alert('You have been logged out successfully.');
 
