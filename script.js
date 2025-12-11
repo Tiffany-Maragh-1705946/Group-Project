@@ -357,11 +357,9 @@ const products = [
     { id: 'D008', name: 'Yuzu Refresher', price: 6.00, description: 'Vibrant yuzu sparkling drink.', image: '../Assets/yuzu_drink.png', category: 'drink' },
 ];
 
-/* Cart function */
+/* 4.Cart Page */
 /*Eligio Ortiz*/
 /*24089990*/
-
-
 function getUserCartKey() {
     const currentUserTRN = localStorage.getItem('currentUserTRN');
     return currentUserTRN ? `shoppingCart_${currentUserTRN}` : 'shoppingCart_guest';
@@ -549,8 +547,8 @@ function addItemToCart(productId, productName, price, quantity = 1) {
     }
 }
 
-/* IA#2: User-Defined Function - renderCartItems() */
-/* Creator: Tiffany Maragh 1705946 */
+/* 2408990 - Eligio Ortiz */
+/*4.a Cart item list*/
 function renderCartItems() {
     const cart = loadUserCart(); // CHANGED
     const itemListDiv = document.getElementById('cart-items-list');
@@ -589,8 +587,8 @@ function renderCartItems() {
     attachCartItemListeners();
 }
 
-/* IA#2: User-Defined Function - updateCartTotal() */
-/* Creator: Tiffany Maragh 1705946 */
+/* 2408990 - Eligio Ortiz */
+/*4.b and c Cart total calculation*/
 function updateCartTotal() {
     const TAX_RATE = 0.15;
     const DISCOUNT_PERCENT = 0.10;
