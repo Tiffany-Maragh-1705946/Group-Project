@@ -107,6 +107,10 @@
     gap: 25px;
 }
 
+.cart-icon-page {
+    margin-left: 20px;
+}
+
 .cart-link {
     position: relative;
     color: var(--roasted-chestnut);
